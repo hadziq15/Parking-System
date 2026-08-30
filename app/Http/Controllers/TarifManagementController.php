@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JenisPelanggan;
+use App\Models\Setting;
 use App\Models\Tarif;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,39 +15,48 @@ class TarifManagementController extends Controller
     {
         $tarifs = Tarif::orderBy('created_at', 'desc')->get();
         $jenisPelanggan = JenisPelanggan::orderBy('created_at', 'desc')->get();
+        $settings = Setting::orderBy('key')->get()->keyBy('key');
 
-        return view('management.tarif.index', compact('tarifs', 'jenisPelanggan'));
+        return view('management.tarif.index', compact('tarifs', 'jenisPelanggan', 'settings'));
     }
 
     public function storeTarif(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'jenis_kendaraan' => ['required', 'in:mobil,motor'],
-            'tarif' => ['required', 'integer', 'min:0'],
+            'tarif_jam_pertama' => ['required', 'integer', 'min:0'],
+            'tarif_jam_berikutnya' => ['required', 'integer', 'min:0'],
         ]);
 
         Tarif::create($validated);
 
-        return redirect()->route('management.tarif.index')->with('success', 'Tarif berhasil ditambahkan.');
+        return redirect()->route('management.tarif.index')
+            ->with('success', 'Tarif berhasil ditambahkan.')
+            ->with('active_tab', $request->input('active_tab', 'tarif'));
     }
 
     public function updateTarif(Request $request, Tarif $tarif): RedirectResponse
     {
         $validated = $request->validate([
             'jenis_kendaraan' => ['required', 'in:mobil,motor'],
-            'tarif' => ['required', 'integer', 'min:0'],
+            'tarif_jam_pertama' => ['required', 'integer', 'min:0'],
+            'tarif_jam_berikutnya' => ['required', 'integer', 'min:0'],
         ]);
 
         $tarif->update($validated);
 
-        return redirect()->route('management.tarif.index')->with('success', 'Tarif berhasil diperbarui.');
+        return redirect()->route('management.tarif.index')
+            ->with('success', 'Tarif berhasil diperbarui.')
+            ->with('active_tab', $request->input('active_tab', 'tarif'));
     }
 
-    public function destroyTarif(Tarif $tarif): RedirectResponse
+    public function destroyTarif(Request $request, Tarif $tarif): RedirectResponse
     {
         $tarif->delete();
 
-        return redirect()->route('management.tarif.index')->with('success', 'Tarif berhasil dihapus.');
+        return redirect()->route('management.tarif.index')
+            ->with('success', 'Tarif berhasil dihapus.')
+            ->with('active_tab', $request->input('active_tab', 'tarif'));
     }
 
     public function storeJenisPelanggan(Request $request): RedirectResponse
@@ -54,16 +64,19 @@ class TarifManagementController extends Controller
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:100'],
             'deskripsi' => ['nullable', 'string'],
-            'is_gratis_parkir' => ['nullable', 'boolean'],
-            'is_bebas_denda' => ['nullable', 'boolean'],
-            'prioritas_level' => ['required', 'integer', 'min:1', 'max:5'],
             'status' => ['required', 'in:aktif,nonaktif'],
-            'denda' => ['nullable', 'boolean'],
         ]);
+
+        // Checkbox tanpa value cuma kirim "on" saat dicentang & gak kirim apa-apa saat tidak.
+        // request()->boolean() otomatis handle keduanya jadi true/false, jadi gak perlu masuk rule validasi.
+        $validated['is_gratis_parkir'] = $request->boolean('is_gratis_parkir');
+        $validated['is_bebas_denda'] = $request->boolean('is_bebas_denda');
 
         JenisPelanggan::create($validated);
 
-        return redirect()->route('management.tarif.index')->with('success', 'Jenis pelanggan berhasil ditambahkan.');
+        return redirect()->route('management.tarif.index')
+            ->with('success', 'Jenis pelanggan berhasil ditambahkan.')
+            ->with('active_tab', $request->input('active_tab', 'jenis'));
     }
 
     public function updateJenisPelanggan(Request $request, JenisPelanggan $jenisPelanggan): RedirectResponse
@@ -71,22 +84,25 @@ class TarifManagementController extends Controller
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:100'],
             'deskripsi' => ['nullable', 'string'],
-            'is_gratis_parkir' => ['nullable', 'boolean'],
-            'is_bebas_denda' => ['nullable', 'boolean'],
-            'prioritas_level' => ['required', 'integer', 'min:1', 'max:5'],
             'status' => ['required', 'in:aktif,nonaktif'],
-            'denda' => ['nullable', 'boolean'],
         ]);
+
+        $validated['is_gratis_parkir'] = $request->boolean('is_gratis_parkir');
+        $validated['is_bebas_denda'] = $request->boolean('is_bebas_denda');
 
         $jenisPelanggan->update($validated);
 
-        return redirect()->route('management.tarif.index')->with('success', 'Jenis pelanggan berhasil diperbarui.');
+        return redirect()->route('management.tarif.index')
+            ->with('success', 'Jenis pelanggan berhasil diperbarui.')
+            ->with('active_tab', $request->input('active_tab', 'jenis'));
     }
 
-    public function destroyJenisPelanggan(JenisPelanggan $jenisPelanggan): RedirectResponse
+    public function destroyJenisPelanggan(Request $request, JenisPelanggan $jenisPelanggan): RedirectResponse
     {
         $jenisPelanggan->delete();
 
-        return redirect()->route('management.tarif.index')->with('success', 'Jenis pelanggan berhasil dihapus.');
+        return redirect()->route('management.tarif.index')
+            ->with('success', 'Jenis pelanggan berhasil dihapus.')
+            ->with('active_tab', $request->input('active_tab', 'jenis'));
     }
 }

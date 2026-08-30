@@ -10,19 +10,25 @@
         mode: 'create',
         formAction: '{{ route('management.area.store') }}',
         method: 'POST',
-        form: { nama: '', lokasi: '', kapasitas: '', tarif_id: '' },
+        form: { nama: '', lokasi: '', kapasitas: '', tarif_id: '', jenis_pelanggan_ids: [] },
         openCreate() {
             this.mode = 'create';
             this.formAction = '{{ route('management.area.store') }}';
             this.method = 'POST';
-            this.form = { nama: '', lokasi: '', kapasitas: '', tarif_id: '' };
+            this.form = { nama: '', lokasi: '', kapasitas: '', tarif_id: '', jenis_pelanggan_ids: [] };
             this.modalOpen = true;
         },
         openEdit(item) {
             this.mode = 'edit';
             this.formAction = '/management/area/' + item.id;
             this.method = 'PUT';
-            this.form = { nama: item.nama, lokasi: item.lokasi, kapasitas: item.kapasitas, tarif_id: item.tarif_id ?? '' };
+            this.form = {
+                nama: item.nama,
+                lokasi: item.lokasi,
+                kapasitas: item.kapasitas,
+                tarif_id: item.tarif_id ?? '',
+                jenis_pelanggan_ids: Array.isArray(item.jenis_pelanggan_ids) ? item.jenis_pelanggan_ids : []
+            };
             this.modalOpen = true;
         }
     }">
@@ -51,6 +57,7 @@
                                 <th class="px-4 py-3">Lokasi</th>
                                 <th class="px-4 py-3">Kapasitas</th>
                                 <th class="px-4 py-3">Tarif</th>
+                                <th class="px-4 py-3">Jenis Pengguna</th>
                                 <th class="px-4 py-3 text-right">Aksi</th>
                             </tr>
                         </thead>
@@ -60,10 +67,17 @@
                                     <td class="px-4 py-3 font-medium text-slate-800">{{ $area->nama }}</td>
                                     <td class="px-4 py-3">{{ $area->lokasi }}</td>
                                     <td class="px-4 py-3">{{ $area->kapasitas }}</td>
-                                    <td class="px-4 py-3">{{ $area->tarif ? ucfirst($area->tarif->jenis_kendaraan) . ' / Rp ' . number_format($area->tarif->tarif, 0, ',', '.') : '-' }}</td>
+                                    <td class="px-4 py-3">{{ $area->tarif ? ucfirst($area->tarif->jenis_kendaraan) . ' / Rp ' . number_format($area->tarif->tarif_jam_pertama, 0, ',', '.') . ' / Rp ' . number_format($area->tarif->tarif_jam_berikutnya, 0, ',', '.') : '-' }}</td>
+                                    <td class="px-4 py-3">
+                                        @if ($area->jenisPelanggans->isNotEmpty())
+                                            {{ $area->jenisPelanggans->pluck('nama')->implode(', ') }}
+                                        @else
+                                            <span class="text-slate-400">-</span>
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-3 text-right">
                                         <div class="flex justify-end gap-2">
-                                            <button type="button" @click="openEdit({ id: '{{ $area->id }}', nama: '{{ addslashes($area->nama) }}', lokasi: '{{ addslashes($area->lokasi) }}', kapasitas: '{{ $area->kapasitas }}', tarif_id: '{{ $area->tarif_id ?? '' }}' })" class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100">
+                                            <button type="button" @click="openEdit({ id: '{{ $area->id }}', nama: '{{ addslashes($area->nama) }}', lokasi: '{{ addslashes($area->lokasi) }}', kapasitas: '{{ $area->kapasitas }}', tarif_id: '{{ $area->tarif_id ?? '' }}', jenis_pelanggan_ids: @js($area->jenisPelanggans->pluck('id')->all()) })" class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100">
                                                 Edit
                                             </button>
                                             <form action="{{ route('management.area.destroy', $area) }}" method="POST" onsubmit="return confirm('Yakin hapus area ini?')">
@@ -78,7 +92,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-4 py-8 text-center text-slate-500">Belum ada area parkir.</td>
+                                    <td colspan="6" class="px-4 py-8 text-center text-slate-500">Belum ada area parkir.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -121,9 +135,37 @@
                             <select x-model="form.tarif_id" name="tarif_id" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
                                 <option value="">-- Tidak dipilih --</option>
                                 @foreach ($tarifs as $tarif)
-                                    <option value="{{ $tarif->id }}">{{ ucfirst($tarif->jenis_kendaraan) }} - Rp {{ number_format($tarif->tarif, 0, ',', '.') }}</option>
+                                    <option value="{{ $tarif->id }}">{{ ucfirst($tarif->jenis_kendaraan) }} - Rp {{ number_format($tarif->tarif_jam_pertama, 0, ',', '.') }} / Rp {{ number_format($tarif->tarif_jam_berikutnya, 0, ',', '.') }}</option>
                                 @endforeach
                             </select>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="mb-1 block text-sm font-medium text-slate-700">Jenis Pengguna yang Bisa Masuk Area Ini</label>
+                            <div class="grid gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:grid-cols-2">
+                                @foreach ($jenisPelanggan as $jenis)
+                                    <label class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
+                                        <input
+                                            type="checkbox"
+                                            name="jenis_pelanggan_ids[]"
+                                            value="{{ $jenis->id }}"
+                                            :checked="form.jenis_pelanggan_ids.includes('{{ $jenis->id }}')"
+                                            @change="
+                                                const id = '{{ $jenis->id }}';
+                                                if ($event.target.checked) {
+                                                    if (!form.jenis_pelanggan_ids.includes(id)) {
+                                                        form.jenis_pelanggan_ids.push(id);
+                                                    }
+                                                } else {
+                                                    form.jenis_pelanggan_ids = form.jenis_pelanggan_ids.filter((item) => item !== id);
+                                                }
+                                            "
+                                            class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                        >
+                                        <span>{{ $jenis->nama }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
 

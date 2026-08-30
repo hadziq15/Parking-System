@@ -12,10 +12,11 @@ class AreaManagementController extends Controller
 {
     public function index(): View
     {
-        $areas = AreaParkir::with('tarif')->orderBy('created_at', 'desc')->get();
+        $areas = AreaParkir::with(['tarif', 'jenisPelanggans'])->orderBy('created_at', 'desc')->get();
         $tarifs = Tarif::orderBy('jenis_kendaraan')->get();
+        $jenisPelanggan = \App\Models\JenisPelanggan::orderBy('nama')->get();
 
-        return view('management.area.index', compact('areas', 'tarifs'));
+        return view('management.area.index', compact('areas', 'tarifs', 'jenisPelanggan'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -25,9 +26,12 @@ class AreaManagementController extends Controller
             'lokasi' => ['required', 'string', 'max:255'],
             'kapasitas' => ['required', 'integer', 'min:1'],
             'tarif_id' => ['nullable', 'uuid', 'exists:tarifs,id'],
+            'jenis_pelanggan_ids' => ['nullable', 'array'],
+            'jenis_pelanggan_ids.*' => ['uuid', 'exists:jenis_pelanggans,id'],
         ]);
 
-        AreaParkir::create($validated);
+        $area = AreaParkir::create($validated);
+        $area->jenisPelanggans()->sync($validated['jenis_pelanggan_ids'] ?? []);
 
         return redirect()->route('management.area.index')->with('success', 'Area parkir berhasil ditambahkan.');
     }
@@ -39,9 +43,12 @@ class AreaManagementController extends Controller
             'lokasi' => ['required', 'string', 'max:255'],
             'kapasitas' => ['required', 'integer', 'min:1'],
             'tarif_id' => ['nullable', 'uuid', 'exists:tarifs,id'],
+            'jenis_pelanggan_ids' => ['nullable', 'array'],
+            'jenis_pelanggan_ids.*' => ['uuid', 'exists:jenis_pelanggans,id'],
         ]);
 
         $areaParkir->update($validated);
+        $areaParkir->jenisPelanggans()->sync($validated['jenis_pelanggan_ids'] ?? []);
 
         return redirect()->route('management.area.index')->with('success', 'Area parkir berhasil diperbarui.');
     }

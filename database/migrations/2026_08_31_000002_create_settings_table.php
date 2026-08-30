@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jenis_pelanggans', function (Blueprint $table) {
+        Schema::create('settings', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama', 100);
-            $table->text('deskripsi')->nullable();
-            $table->boolean('is_gratis_parkir')->default(false);
-            $table->boolean('is_bebas_denda')->default(false);
-            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+            $table->string('key', 100)->unique();
+            $table->text('value')->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jenis_pelanggans');
+        Schema::dropIfExists('settings');
     }
 };
