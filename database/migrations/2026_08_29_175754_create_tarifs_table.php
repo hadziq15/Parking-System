@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('tarifs', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->enum('jenis_kendaraan', ['mobil', 'motor']);
-            $table->integer('tarif', 10);
+            // Nilai rupiah disimpan sebagai integer agar tidak ada pecahan desimal.
+            $table->unsignedInteger('tarif');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

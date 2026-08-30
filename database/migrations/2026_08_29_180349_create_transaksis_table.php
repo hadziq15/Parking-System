@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('kendaraan_id')->constrained('kendaraans')->onDelete('cascade');
-            $table->foreignUuid('tarif_id')->constrained('tarifs')->onDelete('cascade');
-            $table->foreignUuid('area_parkir_id')->constrained('area_parkirs')->onDelete('cascade');
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            // FK histori dibuat nullable agar penghapusan data master tidak
+            // ikut menghapus transaksi yang sudah menjadi bukti pembayaran.
+            $table->foreignUuid('kendaraan_id')->nullable()->constrained('kendaraans')->nullOnDelete();
+            $table->foreignUuid('tarif_id')->nullable()->constrained('tarifs')->nullOnDelete();
+            $table->foreignUuid('area_parkir_id')->nullable()->constrained('area_parkirs')->nullOnDelete();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->datetime('waktu_masuk');
             $table->datetime('waktu_keluar')->nullable();
-            $table->integer('durasi')->nullable();
-            $table->integer('denda')->nullable();
-            $table->integer('total_bayar')->nullable();
+            $table->unsignedInteger('durasi')->nullable();
+            $table->unsignedInteger('denda')->nullable();
+            $table->unsignedInteger('total_bayar')->nullable();
             $table->enum('status', ['masuk', 'keluar'])->default('masuk');
             $table->timestamps();
         });

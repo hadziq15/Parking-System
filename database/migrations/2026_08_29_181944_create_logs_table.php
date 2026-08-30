@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            // Log tetap dipertahankan walaupun akun pembuatnya dihapus.
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->text('action');
             $table->timestamps();
         });

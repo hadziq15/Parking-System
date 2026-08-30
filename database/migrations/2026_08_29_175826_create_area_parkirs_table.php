@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('area_parkirs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
-            $table->string('lokasi');
-            $table->integer('kapasitas');
-            $table->foreignUuid('tarif_id')->constrained('tarifs')->onDelete('cascade');
+            $table->string('nama', 100);
+            $table->string('lokasi', 255);
+            $table->unsignedInteger('kapasitas');
+            // Tarif boleh dihapus tanpa menghapus area dan histori transaksi.
+            $table->foreignUuid('tarif_id')->nullable()->constrained('tarifs')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('jenis_pelanggans', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
+            $table->string('nama', 100);
             $table->text('deskripsi')->nullable();
             $table->boolean('is_gratis_parkir')->default(false);
             $table->boolean('is_bebas_denda')->default(false);
-            $table->integer('prioritas_level')->default(1);
+            $table->unsignedTinyInteger('prioritas_level')->default(1);
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->boolean('denda')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

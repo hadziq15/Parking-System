@@ -12,12 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kendaraans', function (Blueprint $table) {
-            $table->uuid()->primary();
-            $table->string('pemilik');
-            $table->string('plat_nomor')->unique();
-            $table->enum('jenis_kendaraan', ['mobil', 'motor','truk']);
-            $table->string('warna');
+            $table->uuid('id')->primary();
+            $table->string('pemilik', 100);
+            $table->string('plat_nomor', 20)->unique();
+            $table->enum('jenis_kendaraan', ['mobil', 'motor', 'truk']);
+            $table->string('warna', 30);
+            // Nullable agar kendaraan tetap dapat disimpan saat jenis pelanggan dihapus.
+            $table->foreignUuid('jenis_pelanggan_id')->nullable()
+                ->constrained('jenis_pelanggans')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
