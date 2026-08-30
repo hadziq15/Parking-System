@@ -16,18 +16,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased" x-data="{
-    sidebarOpen: window.innerWidth >= 1024,
-    updateSidebarOnResize() {
-        if (window.innerWidth >= 1024) {
-            this.sidebarOpen = true;
-        } else {
-            this.sidebarOpen = false;
-        }
-    }
-}" @resize.window="updateSidebarOnResize()">
-    <div class="min-h-screen bg-gray-100 transition-all duration-300"
-        :class="sidebarOpen && window.innerWidth >= 1024 ? 'lg:pl-64' : ''">
+<body class="font-sans antialiased" x-data="{ sidebarOpen: false }">
+    <div class="min-h-screen bg-gray-100 transition-all duration-300 lg:ml-64">
         @include('layouts.navigation')
 
         <!-- Page Heading -->

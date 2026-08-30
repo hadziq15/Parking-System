@@ -16,11 +16,11 @@
 <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300"
     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
     x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100"
-    x-transition:leave-end="opacity-0" @click="sidebarOpen = false" class="fixed inset-0 z-30 bg-slate-900/50 lg:hidden"
+    x-transition:leave-end="opacity-0" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }" class="fixed inset-0 z-30 bg-slate-900/50 lg:hidden"
     style="display:none;"></div>
 
 <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-    class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0">
+    class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:shadow-none">
 
     {{-- Logo + tombol tutup (mobile) --}}
     <div class="flex h-16 shrink-0 items-center gap-2 border-b border-slate-200 px-6">
@@ -28,7 +28,7 @@
             <x-application-logo class="h-8 w-8 fill-current text-indigo-600" />
             <span class="font-bold tracking-tight text-slate-800">Parking System</span>
         </a>
-        <button @click="sidebarOpen = false" type="button"
+        <button @click="if (window.innerWidth < 1024) { sidebarOpen = false; }" type="button"
             class="ms-auto rounded-md p-1 text-slate-400 hover:bg-slate-100 lg:hidden" aria-label="Tutup menu">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -38,7 +38,7 @@
 
     {{-- Menu utama --}}
     <nav class="flex-1 space-y-2 overflow-y-auto px-3 py-4">
-        <a href="{{ route('dashboard') }}" @click="sidebarOpen = false"
+        <a href="{{ route('dashboard') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
             <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -53,7 +53,7 @@
                     {{ __('Admin') }}
                 </p>
                 <div class="space-y-1">
-                    <a href="#" @click="sidebarOpen = false"
+                    <a href="{{ route('user-management.index') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -62,7 +62,7 @@
                         {{ __('Kelola User') }}
                     </a>
 
-                    <a href="#" @click="sidebarOpen = false"
+                    <a href="{{ route('management.tarif.index') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -71,7 +71,7 @@
                         {{ __('Tarif') }}
                     </a>
 
-                    <a href="#" @click="sidebarOpen = false"
+                    <a href="{{ route('management.area.index') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -80,7 +80,7 @@
                         {{ __('Area') }}
                     </a>
 
-                    <a href="#" @click="sidebarOpen = false"
+                    <a href="{{ route('management.vehicle.index') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -98,7 +98,7 @@
                     {{ __('User') }}
                 </p>
                 <div class="space-y-1">
-                    <a href="#" @click="sidebarOpen = false"
+                    <a href="#" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -107,7 +107,7 @@
                         {{ __('Kendaraan Masuk') }}
                     </a>
 
-                    <a href="#" @click="sidebarOpen = false"
+                    <a href="#" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -125,7 +125,7 @@
                     {{ __('Owner') }}
                 </p>
                 <div class="space-y-1">
-                    <a href="#" @click="sidebarOpen = false"
+                    <a href="#" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
