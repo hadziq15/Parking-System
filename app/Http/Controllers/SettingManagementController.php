@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class SettingManagementController extends Controller
@@ -49,6 +51,11 @@ class SettingManagementController extends Controller
                 ['value' => (string) $value],
             );
         }
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Mengubah pengaturan parkir: ' . json_encode(array_keys($settings)),
+        ]);
 
         return redirect()->route('management.setting.index')->with('success', 'Pengaturan berhasil diperbarui.');
     }

@@ -17,6 +17,14 @@ Route::middleware(['auth', 'verified', 'role:user,admin,super_admin,owner'])->gr
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::get('/kendaraan-masuk', [\App\Http\Controllers\ParkirController::class, 'masuk'])->name('parkir.masuk');
+    Route::post('/kendaraan-masuk', [\App\Http\Controllers\ParkirController::class, 'storeMasuk'])->name('parkir.masuk.store');
+
+    Route::get('/kendaraan-keluar', [\App\Http\Controllers\ParkirController::class, 'keluar'])->name('parkir.keluar');
+    Route::post('/kendaraan-keluar', [\App\Http\Controllers\ParkirController::class, 'storeKeluar'])->name('parkir.keluar.store');
+
+    Route::get('/log-aktivitas', [\App\Http\Controllers\LogController::class, 'index'])->name('logs.index');
 });
 
 // route admin

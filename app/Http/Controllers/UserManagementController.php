@@ -12,11 +12,21 @@ use Illuminate\View\View;
 
 class UserManagementController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::orderBy('created_at', 'desc')->get();
+        $search = trim((string) $request->query('search', ''));
 
-        return view('management.user.index', compact('users'));
+        $users = User::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('management.user.index', compact('users', 'search'));
     }
 
     public function store(Request $request): RedirectResponse

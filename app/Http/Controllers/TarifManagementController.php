@@ -70,6 +70,7 @@ class TarifManagementController extends Controller
         // Checkbox tanpa value cuma kirim "on" saat dicentang & gak kirim apa-apa saat tidak.
         // request()->boolean() otomatis handle keduanya jadi true/false, jadi gak perlu masuk rule validasi.
         $validated['is_gratis_parkir'] = $request->boolean('is_gratis_parkir');
+        $validated['is_parkir_flat'] = $request->boolean('is_parkir_flat');
         $validated['is_bebas_denda'] = $request->boolean('is_bebas_denda');
 
         JenisPelanggan::create($validated);
@@ -88,6 +89,7 @@ class TarifManagementController extends Controller
         ]);
 
         $validated['is_gratis_parkir'] = $request->boolean('is_gratis_parkir');
+        $validated['is_parkir_flat'] = $request->boolean('is_parkir_flat');
         $validated['is_bebas_denda'] = $request->boolean('is_bebas_denda');
 
         $jenisPelanggan->update($validated);

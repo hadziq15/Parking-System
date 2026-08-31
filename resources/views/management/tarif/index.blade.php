@@ -20,7 +20,7 @@
         tarifForm: { jenis_kendaraan: 'mobil', tarif_jam_pertama: '', tarif_jam_berikutnya: '' },
         jenisAction: '{{ route('management.jenis-pelanggan.store') }}',
         jenisMethod: 'POST',
-        jenisForm: { nama: '', deskripsi: '', is_gratis_parkir: false, is_bebas_denda: false, status: 'aktif' },
+        jenisForm: { nama: '', deskripsi: '', is_gratis_parkir: false, is_parkir_flat: false, is_bebas_denda: false, status: 'aktif' },
         openTarifCreate() {
             this.tarifAction = '{{ route('management.tarif.store') }}';
             this.tarifMethod = 'POST';
@@ -40,13 +40,13 @@
         openJenisCreate() {
             this.jenisAction = '{{ route('management.jenis-pelanggan.store') }}';
             this.jenisMethod = 'POST';
-            this.jenisForm = { nama: '', deskripsi: '', is_gratis_parkir: false, is_bebas_denda: false, status: 'aktif' };
+            this.jenisForm = { nama: '', deskripsi: '', is_gratis_parkir: false, is_parkir_flat: false, is_bebas_denda: false, status: 'aktif' };
             this.jenisModalOpen = true;
         },
         openJenisEdit(item) {
             this.jenisAction = '/management/jenis-pelanggan/' + item.id;
             this.jenisMethod = 'PUT';
-            this.jenisForm = { nama: item.nama, deskripsi: item.deskripsi ?? '', is_gratis_parkir: item.is_gratis_parkir, is_bebas_denda: item.is_bebas_denda, status: item.status };
+            this.jenisForm = { nama: item.nama, deskripsi: item.deskripsi ?? '', is_gratis_parkir: item.is_gratis_parkir, is_parkir_flat: item.is_parkir_flat, is_bebas_denda: item.is_bebas_denda, status: item.status };
             this.jenisModalOpen = true;
         }
     }">
@@ -188,7 +188,7 @@
                                         <td class="px-4 py-3 text-right">
                                             <div class="flex justify-end gap-2">
                                                 <button type="button"
-                                                    @click="openJenisEdit({ id: '{{ $jenis->id }}', nama: '{{ addslashes($jenis->nama) }}', deskripsi: '{{ addslashes($jenis->deskripsi ?? '') }}', is_gratis_parkir: {{ $jenis->is_gratis_parkir ? 'true' : 'false' }}, is_bebas_denda: {{ $jenis->is_bebas_denda ? 'true' : 'false' }}, status: '{{ $jenis->status }}' })"
+                                                    @click="openJenisEdit({ id: '{{ $jenis->id }}', nama: '{{ addslashes($jenis->nama) }}', deskripsi: '{{ addslashes($jenis->deskripsi ?? '') }}', is_gratis_parkir: {{ $jenis->is_gratis_parkir ? 'true' : 'false' }}, is_parkir_flat: {{ $jenis->is_parkir_flat ? 'true' : 'false' }}, is_bebas_denda: {{ $jenis->is_bebas_denda ? 'true' : 'false' }}, status: '{{ $jenis->status }}' })"
                                                     class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100">
                                                     Edit
                                                 </button>
@@ -353,6 +353,13 @@
                             class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                             <span class="text-sm font-medium text-slate-700">Gratis Parkir</span>
                             <input x-model="jenisForm.is_gratis_parkir" type="checkbox" name="is_gratis_parkir"
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                        </div>
+
+                        <div
+                            class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                            <span class="text-sm font-medium text-slate-700">Parkir Flat</span>
+                            <input x-model="jenisForm.is_parkir_flat" type="checkbox" name="is_parkir_flat"
                                 class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                         </div>
 

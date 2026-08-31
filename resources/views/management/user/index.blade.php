@@ -72,17 +72,35 @@
                 </div>
             @endif
 
-            <div class="mb-6 flex items-center justify-between gap-3">
-                <div>
-                    <p class="text-sm text-slate-500">Total user: {{ $users->count() }}</p>
+            <div class="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div class="flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:items-center">
+                    <form method="GET" action="{{ route('user-management.index') }}" class="flex w-full gap-2">
+                        <input type="search" name="search" value="{{ $search }}"
+                            placeholder="Cari nama atau email"
+                            class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                        <button type="submit"
+                            class="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100">
+                            Cari
+                        </button>
+                        @if ($search !== '')
+                            <a href="{{ route('user-management.index') }}"
+                                class="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100">
+                                Reset
+                            </a>
+                        @endif
+                    </form>
                 </div>
-                <button type="button" @click="openCreate()"
-                    class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8h-16" />
-                    </svg>
-                    Tambah User
-                </button>
+
+                <div class="flex items-center justify-between gap-3">
+                    <p class="text-sm text-slate-500">Total user: {{ $users->count() }}</p>
+                    <button type="button" @click="openCreate()"
+                        class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8h-16" />
+                        </svg>
+                        Tambah User
+                    </button>
+                </div>
             </div>
 
             <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -132,7 +150,7 @@
                             @empty
                                 <tr>
                                     <td colspan="5" class="px-4 py-8 text-center text-slate-500">
-                                        Belum ada user.
+                                        {{ $search !== '' ? 'Tidak ada user yang cocok dengan pencarian.' : 'Belum ada user.' }}
                                     </td>
                                 </tr>
                             @endforelse

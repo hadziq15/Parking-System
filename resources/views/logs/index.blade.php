@@ -1,0 +1,38 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="text-xl font-semibold leading-tight text-slate-800">
+            {{ __('Log Aktivitas') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-8">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-left text-sm text-slate-700">
+                        <thead class="bg-slate-50 text-xs uppercase tracking-[0.12em] text-slate-500">
+                            <tr>
+                                <th class="px-4 py-3">Waktu</th>
+                                <th class="px-4 py-3">User</th>
+                                <th class="px-4 py-3">Aktivitas</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            @forelse ($logs as $log)
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-4 py-3">{{ $log->created_at?->format('d M Y H:i') ?? '-' }}</td>
+                                    <td class="px-4 py-3">{{ $log->user?->name ?? 'System' }}</td>
+                                    <td class="px-4 py-3 text-slate-800">{{ $log->action }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-4 py-8 text-center text-slate-500">Belum ada log aktivitas.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

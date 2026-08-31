@@ -118,7 +118,7 @@
                     {{ __('User') }}
                 </p>
                 <div class="space-y-1">
-                    <a href="#" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
+                    <a href="{{ route('parkir.masuk') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor">
@@ -127,13 +127,22 @@
                         {{ __('Kendaraan Masuk') }}
                     </a>
 
-                    <a href="#" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
+                    <a href="{{ route('parkir.keluar') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4M12 20V4" />
                         </svg>
                         {{ __('Kendaraan Keluar') }}
+                    </a>
+
+                    <a href="{{ route('logs.index') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
+                        <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5M8.25 17.25h7.5M4.5 6.75h.01M4.5 12h.01M4.5 17.25h.01" />
+                        </svg>
+                        {{ __('Log Aktivitas') }}
                     </a>
                 </div>
             </div>

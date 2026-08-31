@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['nama', 'deskripsi', 'is_gratis_parkir', 'is_bebas_denda', 'status'])]
+#[Fillable(['nama', 'deskripsi', 'is_gratis_parkir', 'is_parkir_flat', 'is_bebas_denda', 'status'])]
 class JenisPelanggan extends Model
 {
     use HasUuids, SoftDeletes;
@@ -29,6 +29,7 @@ class JenisPelanggan extends Model
     {
         return [
             'is_gratis_parkir' => 'boolean',
+            'is_parkir_flat' => 'boolean',
             'is_bebas_denda' => 'boolean',
         ];
     }
