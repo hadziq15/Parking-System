@@ -28,7 +28,8 @@ Route::middleware(['auth', 'verified', 'role:user,admin,super_admin,owner'])->gr
 });
 
 // route admin
-Route::middleware(['auth', 'verified', 'role:admin,super_admin'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin,super_admin,owner'])->group(function () {
+    Route::get('/log-aktivitas/admin', [\App\Http\Controllers\LogController::class, 'adminIndex'])->name('logs.admin.index');
     // route user management
     Route::prefix('user-management')->name('user-management.')->group(function () {
         Route::get('/', [UserManagementController::class, 'index'])->name('index');

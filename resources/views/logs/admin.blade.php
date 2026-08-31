@@ -1,12 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-slate-800">
-            {{ __('Log Aktivitas Saya') }}
+            {{ __('Log Aktivitas Admin') }}
         </h2>
     </x-slot>
 
     <div class="py-8">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                Menampilkan semua aktivitas dari seluruh user di aplikasi.
+            </div>
+
             <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200 text-left text-sm text-slate-700">

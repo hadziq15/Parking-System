@@ -7,7 +7,7 @@
 @php
     $currentRole = Auth::check() ? Auth::user()->role : 'user';
     $isSuperAdmin = $currentRole === 'super_admin';
-    $isAdmin = $isSuperAdmin || $currentRole === 'admin';
+    $isAdmin = $isSuperAdmin || in_array($currentRole, ['admin', 'owner'], true);
     $isUser = $isSuperAdmin || $currentRole === 'user';
     $isOwner = $isSuperAdmin || $currentRole === 'owner';
 @endphp
@@ -53,6 +53,16 @@
                     {{ __('Admin') }}
                 </p>
                 <div class="space-y-1">
+                    <a href="{{ route('logs.admin.index') }}"
+                        @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
+                        <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5M8.25 17.25h7.5M4.5 6.75h.01M4.5 12h.01M4.5 17.25h.01" />
+                        </svg>
+                        {{ __('Log Aktivitas') }}
+                    </a>
+
                     <a href="{{ route('user-management.index') }}"
                         @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
@@ -142,7 +152,7 @@
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5M8.25 17.25h7.5M4.5 6.75h.01M4.5 12h.01M4.5 17.25h.01" />
                         </svg>
-                        {{ __('Log Aktivitas') }}
+                        {{ __('Log Aktivitas Saya') }}
                     </a>
                 </div>
             </div>
