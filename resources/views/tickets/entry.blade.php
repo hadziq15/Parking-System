@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <title>Karcis Masuk</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+        .ticket {
+            width: 180px;
+            margin: 18px auto;
+            padding: 18px 14px;
+            border: 2px solid #0f172a;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+            text-align: center;
+        }
+        .brand {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        .label {
+            font-size: 9px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+        }
+        .value {
+            font-size: 13px;
+            font-weight: bold;
+            margin: 4px 0 10px;
+        }
+        .barcode {
+            margin: 12px 0 8px;
+            font-size: 22px;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+        .divider {
+            border-top: 1px dashed #cbd5e1;
+            margin: 12px 0;
+        }
+        .small {
+            font-size: 9px;
+            color: #475569;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="brand">PARKING</div>
+        <div class="label">Karcis Masuk</div>
+        <div class="barcode">{{ $transaction->nomor_karcis }}</div>
+
+        <div class="label">Plat Nomor</div>
+        <div class="value">{{ $transaction->plat_nomor }}</div>
+
+        <div class="label">Jenis Kendaraan</div>
+        <div class="value">{{ $transaction->jenis_kendaraan ?? 'Tidak diketahui' }}</div>
+
+        <div class="label">Area</div>
+        <div class="value">{{ $transaction->areaParkir?->nama ?? '-' }}</div>
+
+        <div class="label">Waktu Masuk</div>
+        <div class="value">{{ $transaction->waktu_masuk?->format('d M Y H:i') ?? '-' }}</div>
+
+        <div class="divider"></div>
+        <div class="small">Tunjukkan karcis ini saat keluar dari area parkir.</div>
+    </div>
+</body>
+</html>

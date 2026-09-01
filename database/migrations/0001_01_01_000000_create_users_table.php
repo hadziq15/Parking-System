@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email', 255)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 255);
-            $table->enum('role', ['admin', 'user', 'super_admin'])->default('user');
+            $table->enum('role', ['admin', 'user', 'owner', 'super_admin'])->default('user');
             $table->rememberToken();
             $table->timestamps();
             // Pengguna dinonaktifkan secara logis agar histori transaksi tetap utuh.

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AreaManagementController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingManagementController;
 use App\Http\Controllers\TarifManagementController;
 use App\Http\Controllers\UserManagementController;
@@ -15,7 +16,53 @@ Route::get('/', function () {
 // route user (pegawai)
 Route::middleware(['auth', 'verified', 'role:user,admin,super_admin,owner'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $today = now()->toDateString();
+
+        $transactionsToday = \App\Models\Transaksi::query()
+            ->whereDate('waktu_masuk', $today)
+            ->count();
+
+        $currentlyParked = \App\Models\Transaksi::query()
+            ->where('status', 'masuk')
+            ->whereNull('waktu_keluar')
+            ->count();
+
+        $incomeToday = \App\Models\Transaksi::query()
+            ->where('status', 'keluar')
+            ->whereDate('waktu_keluar', $today)
+            ->sum('total_bayar');
+
+        $areas = \App\Models\AreaParkir::query()
+            ->with('tarif')
+            ->get()
+            ->map(function ($area) {
+                $occupied = \App\Models\Transaksi::query()
+                    ->where('area_parkir_id', $area->id)
+                    ->where('status', 'masuk')
+                    ->whereNull('waktu_keluar')
+                    ->count();
+
+                $capacity = max(1, (int) $area->kapasitas);
+                $percent = min(100, (int) round(($occupied / $capacity) * 100));
+
+                return [
+                    'id' => $area->id,
+                    'nama' => $area->nama,
+                    'lokasi' => $area->lokasi,
+                    'kapasitas' => $capacity,
+                    'terisi' => $occupied,
+                    'tersisa' => max(0, $capacity - $occupied),
+                    'persentase' => $percent,
+                ];
+            });
+
+        $recentTransactions = \App\Models\Transaksi::query()
+            ->with(['areaParkir', 'jenisPelanggan'])
+            ->latest('waktu_masuk')
+            ->limit(10)
+            ->get();
+
+        return view('dashboard', compact('transactionsToday', 'currentlyParked', 'incomeToday', 'areas', 'recentTransactions'));
     })->name('dashboard');
 
     Route::get('/kendaraan-masuk', [\App\Http\Controllers\ParkirController::class, 'masuk'])->name('parkir.masuk');
@@ -25,6 +72,8 @@ Route::middleware(['auth', 'verified', 'role:user,admin,super_admin,owner'])->gr
     Route::post('/kendaraan-keluar', [\App\Http\Controllers\ParkirController::class, 'storeKeluar'])->name('parkir.keluar.store');
 
     Route::get('/log-aktivitas', [\App\Http\Controllers\LogController::class, 'index'])->name('logs.index');
+    Route::get('/parkir/tiket/{transaksi}', [\App\Http\Controllers\ParkirController::class, 'downloadTicket'])->name('parkir.ticket.download');
+    Route::get('/parkir/tiket-keluar/{transaksi}', [\App\Http\Controllers\ParkirController::class, 'downloadExitTicket'])->name('parkir.ticket.exit.download');
 });
 
 // route admin
@@ -63,6 +112,9 @@ Route::middleware(['auth', 'verified', 'role:admin,super_admin,owner'])->group(f
         Route::post('/setting/bulk', [SettingManagementController::class, 'saveBulk'])->name('setting.bulk');
         Route::delete('/setting/{setting}', [SettingManagementController::class, 'destroy'])->name('setting.destroy');
     });
+
+    Route::get('/laporan-transaksi', [ReportController::class, 'index'])->name('report.transaksi.index');
+    Route::get('/laporan-transaksi/export-pdf', [ReportController::class, 'exportPdf'])->name('report.transaksi.export');
 });
 
 Route::middleware('auth')->group(function () {

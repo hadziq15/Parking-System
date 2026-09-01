@@ -9,7 +9,12 @@
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             @if (session('success'))
                 <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                    {{ session('success') }}
+                    <div>{{ session('success') }}</div>
+                    @if (session('ticket_url'))
+                        <a href="{{ session('ticket_url') }}" class="mt-2 inline-block font-semibold underline" target="_blank" rel="noopener noreferrer">
+                            Download karcis PDF
+                        </a>
+                    @endif
                 </div>
             @endif
 
@@ -66,7 +71,7 @@
                                 class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
                                 <option value="">Pilih area parkir</option>
                                 @foreach ($areas as $area)
-                                    <option value="{{ $area->id }}" {{ old('area_parkir_id') == $area->id ? 'selected' : '' }}>
+                                    <option value="{{ $area->id }}" data-jenis="{{ optional($area->tarif)->jenis_kendaraan }}" {{ old('area_parkir_id') == $area->id ? 'selected' : '' }}>
                                         {{ $area->nama }} - {{ $area->lokasi }}
                                         @if ($area->tarif)
                                             - {{ ucfirst($area->tarif->jenis_kendaraan) }}
@@ -94,7 +99,36 @@
     <script>
         const registeredVehicles = @json($registeredVehicles);
         const platInput = document.getElementById('plat_nomor');
+        const vehicleTypeSelect = document.getElementById('jenis_kendaraan');
+        const areaSelect = document.getElementById('area_parkir_id');
         const vehicleInfo = document.getElementById('vehicle-info');
+
+        function filterAreaByVehicleType(selectedType) {
+            const optionList = Array.from(areaSelect.options);
+            let selectedValueStillValid = false;
+
+            optionList.forEach((option) => {
+                const isPlaceholder = option.value === '';
+                const optionType = option.dataset.jenis || '';
+                const isVisible = isPlaceholder || !selectedType || optionType === selectedType;
+
+                option.hidden = !isVisible;
+                option.disabled = !isVisible && !isPlaceholder;
+
+                if (option.value === areaSelect.value && isVisible) {
+                    selectedValueStillValid = true;
+                }
+            });
+
+            if (!selectedType) {
+                areaSelect.value = '';
+                return;
+            }
+
+            if (!selectedValueStillValid && areaSelect.value !== '') {
+                areaSelect.value = '';
+            }
+        }
 
         function updateVehicleInfo() {
             const rawValue = (platInput.value || '').trim();
@@ -109,11 +143,21 @@
             const match = registeredVehicles.find((vehicle) => vehicle.plat_nomor === formatted);
             const jenisPelanggan = match ? match.jenis_pelanggan : 'Reguler';
 
+            if (match && match.jenis_kendaraan) {
+                vehicleTypeSelect.value = match.jenis_kendaraan;
+            }
+
+            filterAreaByVehicleType(vehicleTypeSelect.value);
             vehicleInfo.textContent = 'Jenis pelanggan: ' + jenisPelanggan;
             vehicleInfo.classList.remove('hidden');
         }
 
+        vehicleTypeSelect.addEventListener('change', function () {
+            filterAreaByVehicleType(this.value);
+        });
+
         platInput.addEventListener('input', updateVehicleInfo);
+        filterAreaByVehicleType(vehicleTypeSelect.value || '');
         updateVehicleInfo();
     </script>
 </x-app-layout>

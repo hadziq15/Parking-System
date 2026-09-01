@@ -164,7 +164,7 @@
                     {{ __('Owner') }}
                 </p>
                 <div class="space-y-1">
-                    <a href="#" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
+                    <a href="{{ route('report.transaksi.index') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor">

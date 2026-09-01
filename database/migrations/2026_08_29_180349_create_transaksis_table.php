@@ -19,14 +19,15 @@ return new class extends Migration
             $table->foreignUuid('tarif_id')->nullable()->constrained('tarifs')->nullOnDelete();
             $table->foreignUuid('area_parkir_id')->nullable()->constrained('area_parkirs')->nullOnDelete();
             $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('plat_nomor', 20)->nullable()->after('kendaraan_id');
-            $table->foreignUuid('jenis_pelanggan_id')->nullable()->after('plat_nomor')->constrained('jenis_pelanggans')->nullOnDelete();
+            $table->string('plat_nomor', 20)->nullable();
+            $table->string('nomor_karcis', 50)->nullable()->unique();
+            $table->foreignUuid('jenis_pelanggan_id')->nullable()->constrained('jenis_pelanggans')->nullOnDelete();
             $table->datetime('waktu_masuk');
             $table->datetime('waktu_keluar')->nullable();
             $table->unsignedInteger('durasi')->nullable();
             $table->unsignedInteger('denda')->nullable();
             $table->unsignedInteger('total_bayar')->nullable();
-            $table->enum('status', ['masuk', 'keluar'])->default('masukd');
+            $table->enum('status', ['masuk', 'keluar'])->default('masuk');
             $table->timestamps();
         });
     }
