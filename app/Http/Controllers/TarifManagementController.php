@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\JenisPelanggan;
+use App\Models\Log;
 use App\Models\Setting;
 use App\Models\Tarif;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class TarifManagementController extends Controller
@@ -36,7 +38,12 @@ class TarifManagementController extends Controller
             'tarif_jam_berikutnya' => ['required', 'integer', 'min:0'],
         ]);
 
-        Tarif::create($validated);
+        $tarif = Tarif::create($validated);
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Tarif ditambahkan: '.$tarif->jenis_kendaraan.' | Rp '.$tarif->tarif_jam_pertama.' / jam pertama, Rp '.$tarif->tarif_jam_berikutnya.' / jam berikutnya',
+        ]);
 
         return redirect()->route('management.tarif.index')
             ->with('success', 'Tarif berhasil ditambahkan.')
@@ -53,6 +60,11 @@ class TarifManagementController extends Controller
 
         $tarif->update($validated);
 
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Tarif diperbarui: '.$tarif->jenis_kendaraan.' | Rp '.$tarif->tarif_jam_pertama.' / jam pertama, Rp '.$tarif->tarif_jam_berikutnya.' / jam berikutnya',
+        ]);
+
         return redirect()->route('management.tarif.index')
             ->with('success', 'Tarif berhasil diperbarui.')
             ->with('active_tab', $request->input('active_tab', 'tarif'));
@@ -60,7 +72,16 @@ class TarifManagementController extends Controller
 
     public function destroyTarif(Request $request, Tarif $tarif): RedirectResponse
     {
+        $jenisKendaraan = $tarif->jenis_kendaraan;
+        $tarifJamPertama = $tarif->tarif_jam_pertama;
+        $tarifJamBerikutnya = $tarif->tarif_jam_berikutnya;
+
         $tarif->delete();
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Tarif dihapus: '.$jenisKendaraan.' | Rp '.$tarifJamPertama.' / jam pertama, Rp '.$tarifJamBerikutnya.' / jam berikutnya',
+        ]);
 
         return redirect()->route('management.tarif.index')
             ->with('success', 'Tarif berhasil dihapus.')
@@ -85,7 +106,12 @@ class TarifManagementController extends Controller
         $validated['is_parkir_flat'] = $request->boolean('is_parkir_flat');
         $validated['is_bebas_denda'] = $request->boolean('is_bebas_denda');
 
-        JenisPelanggan::create($validated);
+        $jenisPelanggan = JenisPelanggan::create($validated);
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Jenis pelanggan ditambahkan: '.$jenisPelanggan->nama.' ('.$jenisPelanggan->status.')',
+        ]);
 
         return redirect()->route('management.tarif.index')
             ->with('success', 'Jenis pelanggan berhasil ditambahkan.')
@@ -106,6 +132,11 @@ class TarifManagementController extends Controller
 
         $jenisPelanggan->update($validated);
 
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Jenis pelanggan diperbarui: '.$jenisPelanggan->nama.' ('.$jenisPelanggan->status.')',
+        ]);
+
         return redirect()->route('management.tarif.index')
             ->with('success', 'Jenis pelanggan berhasil diperbarui.')
             ->with('active_tab', $request->input('active_tab', 'jenis'));
@@ -113,7 +144,15 @@ class TarifManagementController extends Controller
 
     public function destroyJenisPelanggan(Request $request, JenisPelanggan $jenisPelanggan): RedirectResponse
     {
+        $namaJenis = $jenisPelanggan->nama;
+        $statusJenis = $jenisPelanggan->status;
+
         $jenisPelanggan->delete();
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Jenis pelanggan dihapus: '.$namaJenis.' ('.$statusJenis.')',
+        ]);
 
         return redirect()->route('management.tarif.index')
             ->with('success', 'Jenis pelanggan berhasil dihapus.')

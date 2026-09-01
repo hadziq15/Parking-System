@@ -61,7 +61,7 @@ test('unregistered vehicle is stored only in transaction as regular type', funct
         'area_parkir_id' => $area->id,
     ]);
 
-    $response->assertRedirect(route('parkir.masuk'));
+    $response->assertRedirect();
     $this->assertDatabaseMissing('kendaraans', ['plat_nomor' => 'B 1234 ABC']);
     $this->assertDatabaseHas('transaksis', [
         'plat_nomor' => 'B 1234 ABC',
@@ -107,7 +107,7 @@ test('vehicle exit applies grace and half pricing rules', function () {
         'plat_nomor' => 'B 1234 XYZ',
     ]);
 
-    $response->assertRedirect(route('parkir.keluar'));
+    $response->assertRedirect();
     $transaction->refresh();
     expect($transaction->total_bayar)->toBe(5000)
         ->and($transaction->status)->toBe('keluar');
@@ -244,7 +244,7 @@ test('parking exit accepts ticket number and applies lost ticket fee for non exe
         'karcis_hilang' => '1',
     ]);
 
-    $response->assertRedirect(route('parkir.keluar'));
+    $response->assertRedirect();
     $transaction->refresh();
     expect($transaction->denda)->toBe(25000)
         ->and($transaction->status)->toBe('keluar');

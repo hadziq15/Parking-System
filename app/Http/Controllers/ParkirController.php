@@ -38,13 +38,18 @@ class ParkirController extends Controller
 
     public function keluar(): View
     {
+        return view('parkir.keluar');
+    }
+
+    public function terparkir(): View
+    {
         $activeTransactions = Transaksi::with(['kendaraan', 'jenisPelanggan', 'areaParkir', 'tarif'])
             ->where('status', 'masuk')
             ->whereNull('waktu_keluar')
             ->orderBy('waktu_masuk', 'desc')
             ->get();
 
-        return view('parkir.keluar', compact('activeTransactions'));
+        return view('parkir.terparkir', compact('activeTransactions'));
     }
 
     /**
@@ -110,6 +115,7 @@ class ParkirController extends Controller
             'kendaraan_id' => $registeredVehicle?->id,
             'plat_nomor' => $platNomor,
             'nomor_karcis' => $nomorKarcis,
+            'jenis_kendaraan' => $validated['jenis_kendaraan'],
             'jenis_pelanggan_id' => $jenisPelanggan->id,
             'tarif_id' => $area->tarif->id,
             'area_parkir_id' => $area->id,
@@ -222,20 +228,47 @@ class ParkirController extends Controller
             ->with('exit_ticket_url', route('parkir.ticket.exit.download', $transaction));
     }
 
-    public function downloadTicket(Transaksi $transaction)
+    public function previewTicket(Transaksi $transaction)
     {
-        $pdf = Pdf::loadView('tickets.entry', ['transaction' => $transaction])
+        $transaction->load(['kendaraan', 'areaParkir', 'jenisPelanggan', 'tarif']);
+
+        $pdf = Pdf::loadView('tickets.entry', $this->buildTicketEntryData($transaction))
             ->setPaper([0, 0, 220, 420], 'portrait');
 
-        return $pdf->download('karcis-masuk-'.$transaction->nomor_karcis.'.pdf');
+        return $pdf->stream('karcis-masuk-'.$transaction->nomor_karcis.'.pdf', ['Attachment' => false]);
     }
 
-    public function downloadExitTicket(Transaksi $transaction)
+    public function previewExitTicket(Transaksi $transaction)
     {
-        $pdf = Pdf::loadView('tickets.exit', ['transaction' => $transaction])
+        $transaction->load(['kendaraan', 'areaParkir', 'jenisPelanggan', 'tarif']);
+
+        $pdf = Pdf::loadView('tickets.exit', $this->buildTicketExitData($transaction))
             ->setPaper([0, 0, 220, 420], 'portrait');
 
-        return $pdf->download('karcis-keluar-'.$transaction->nomor_karcis.'.pdf');
+        return $pdf->stream('karcis-keluar-'.$transaction->nomor_karcis.'.pdf', ['Attachment' => false]);
+    }
+
+    protected function buildTicketEntryData(Transaksi $transaction): array
+    {
+        return [
+            'nomor_karcis' => $transaction->nomor_karcis ?? '-',
+            'plat_nomor' => $transaction->plat_nomor ?? '-',
+            'jenis_kendaraan' => $transaction->jenis_kendaraan ?? $transaction->kendaraan?->jenis_kendaraan ?? 'Tidak diketahui',
+            'area_nama' => $transaction->areaParkir?->nama ?? '-',
+            'waktu_masuk' => $transaction->waktu_masuk?->format('d M Y H:i') ?? '-',
+        ];
+    }
+
+    protected function buildTicketExitData(Transaksi $transaction): array
+    {
+        return [
+            'nomor_karcis' => $transaction->nomor_karcis ?? '-',
+            'plat_nomor' => $transaction->plat_nomor ?? '-',
+            'jenis_kendaraan' => $transaction->jenis_kendaraan ?? $transaction->kendaraan?->jenis_kendaraan ?? 'Tidak diketahui',
+            'area_nama' => $transaction->areaParkir?->nama ?? '-',
+            'waktu_keluar' => $transaction->waktu_keluar?->format('d M Y H:i') ?? '-',
+            'total_bayar' => (int) ($transaction->total_bayar ?? 0),
+        ];
     }
 
     protected function generateTicketNumber(): string

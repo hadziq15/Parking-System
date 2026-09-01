@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['kendaraan_id', 'plat_nomor', 'nomor_karcis', 'jenis_pelanggan_id', 'tarif_id', 'area_parkir_id', 'user_id', 'waktu_masuk', 'waktu_keluar', 'durasi', 'denda', 'total_bayar', 'status'])]
+#[Fillable(['kendaraan_id', 'plat_nomor', 'nomor_karcis', 'jenis_kendaraan', 'jenis_pelanggan_id', 'tarif_id', 'area_parkir_id', 'user_id', 'waktu_masuk', 'waktu_keluar', 'durasi', 'denda', 'total_bayar', 'status'])]
 class Transaksi extends Model
 {
     use HasUuids;

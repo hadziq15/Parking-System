@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,11 +47,16 @@ class UserManagementController extends Controller
             'role' => ['required', Rule::in(['admin', 'user', 'owner'])],
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
+        ]);
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'User ditambahkan: '.$user->name.' ('.$user->email.')',
         ]);
 
         return redirect()->route('user-management.index')->with('success', 'User berhasil ditambahkan.');
@@ -81,6 +87,11 @@ class UserManagementController extends Controller
 
         $user->save();
 
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'User diperbarui: '.$user->name.' ('.$user->email.')',
+        ]);
+
         return redirect()->route('user-management.index')->with('success', 'User berhasil diperbarui.');
     }
 
@@ -94,7 +105,15 @@ class UserManagementController extends Controller
             abort(403, 'Anda tidak bisa menghapus akun sendiri.');
         }
 
+        $userName = $user->name;
+        $userEmail = $user->email;
+
         $user->delete();
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'User dihapus: '.$userName.' ('.$userEmail.')',
+        ]);
 
         return redirect()->route('user-management.index')->with('success', 'User berhasil dihapus.');
     }

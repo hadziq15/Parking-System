@@ -1,0 +1,131 @@
+// Parking System Database Diagram
+// Copy semua isi file ini ke https://dbdiagram.io
+
+Table users {
+  id uuid [pk]
+  name varchar(100)
+  email varchar(255) [unique]
+  email_verified_at timestamp [null]
+  password varchar(255)
+  role varchar(20) [default: 'user']
+  remember_token varchar(100) [null]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table password_reset_tokens {
+  email varchar(255) [pk]
+  token varchar(255)
+  created_at timestamp [null]
+}
+
+Table sessions {
+  id varchar(255) [pk]
+  user_id uuid [null]
+  ip_address varchar(45) [null]
+  user_agent text [null]
+  payload longtext
+  last_activity int
+}
+
+Table jenis_pelanggans {
+  id uuid [pk]
+  nama varchar(100)
+  deskripsi text [null]
+  is_gratis_parkir boolean [default: false]
+  is_parkir_flat boolean [default: false]
+  is_bebas_denda boolean [default: false]
+  status varchar(20) [default: 'aktif']
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table kendaraan {
+  id uuid [pk]
+  pemilik varchar(100)
+  plat_nomor varchar(20) [unique]
+  jenis_kendaraan varchar(20)
+  warna varchar(30)
+  jenis_pelanggan_id uuid [null]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table tarifs {
+  id uuid [pk]
+  jenis_kendaraan varchar(20)
+  tarif_jam_pertama int [default: 0]
+  tarif_jam_berikutnya int [default: 0]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table area_parkirs {
+  id uuid [pk]
+  nama varchar(100)
+  lokasi varchar(255)
+  kapasitas int
+  tarif_id uuid [null]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table area_parkir_jenis_pelanggan {
+  area_parkir_id uuid [pk]
+  jenis_pelanggan_id uuid [pk]
+}
+
+Table transaksis {
+  id uuid [pk]
+  kendaraan_id uuid [null]
+  plat_nomor varchar(20) [null]
+  nomor_karcis varchar(50) [unique, null]
+  jenis_kendaraan varchar(20) [null]
+  jenis_pelanggan_id uuid [null]
+  tarif_id uuid [null]
+  area_parkir_id uuid [null]
+  user_id uuid [null]
+  waktu_masuk timestamp
+  waktu_keluar timestamp [null]
+  durasi int [null]
+  denda int [null]
+  total_bayar int [null]
+  status varchar(20) [default: 'masuk']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table settings {
+  id uuid [pk]
+  key varchar(100) [unique]
+  value text [null]
+  description varchar(255) [null]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table logs {
+  id uuid [pk]
+  user_id uuid [null]
+  action text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Ref: sessions.user_id > users.id
+Ref: kendaraan.jenis_pelanggan_id > jenis_pelanggans.id
+Ref: area_parkirs.tarif_id > tarifs.id
+Ref: area_parkir_jenis_pelanggan.area_parkir_id > area_parkirs.id
+Ref: area_parkir_jenis_pelanggan.jenis_pelanggan_id > jenis_pelanggans.id
+Ref: transaksis.kendaraan_id > kendaraan.id
+Ref: transaksis.jenis_pelanggan_id > jenis_pelanggans.id
+Ref: transaksis.tarif_id > tarifs.id
+Ref: transaksis.area_parkir_id > area_parkirs.id
+Ref: transaksis.user_id > users.id
+Ref: logs.user_id > users.id

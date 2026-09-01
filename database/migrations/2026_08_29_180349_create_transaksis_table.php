@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('plat_nomor', 20)->nullable();
             $table->string('nomor_karcis', 50)->nullable()->unique();
+            $table->enum('jenis_kendaraan', ['mobil', 'motor', 'truk'])->nullable();
             $table->foreignUuid('jenis_pelanggan_id')->nullable()->constrained('jenis_pelanggans')->nullOnDelete();
             $table->datetime('waktu_masuk');
             $table->datetime('waktu_keluar')->nullable();

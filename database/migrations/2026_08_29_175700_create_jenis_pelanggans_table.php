@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama', 100);
             $table->text('deskripsi')->nullable();
             $table->boolean('is_gratis_parkir')->default(false);
+            $table->boolean('is_parkir_flat')->default(false);
             $table->boolean('is_bebas_denda')->default(false);
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();

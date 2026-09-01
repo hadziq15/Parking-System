@@ -81,10 +81,11 @@ Route::middleware(['auth', 'verified', 'role:user,admin,super_admin,owner'])->gr
 
     Route::get('/kendaraan-keluar', [ParkirController::class, 'keluar'])->name('parkir.keluar');
     Route::post('/kendaraan-keluar', [ParkirController::class, 'storeKeluar'])->name('parkir.keluar.store');
+    Route::get('/kendaraan-terparkir', [ParkirController::class, 'terparkir'])->name('parkir.terparkir');
 
     Route::get('/log-aktivitas', [LogController::class, 'index'])->name('logs.index');
-    Route::get('/parkir/tiket/{transaksi}', [ParkirController::class, 'downloadTicket'])->name('parkir.ticket.download');
-    Route::get('/parkir/tiket-keluar/{transaksi}', [ParkirController::class, 'downloadExitTicket'])->name('parkir.ticket.exit.download');
+    Route::get('/parkir/tiket/{transaksi}', [ParkirController::class, 'previewTicket'])->name('parkir.ticket.download');
+    Route::get('/parkir/tiket-keluar/{transaksi}', [ParkirController::class, 'previewExitTicket'])->name('parkir.ticket.exit.download');
 });
 
 // route admin

@@ -146,6 +146,15 @@
                         {{ __('Kendaraan Keluar') }}
                     </a>
 
+                    <a href="{{ route('parkir.terparkir') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
+                        <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5v10.5h-16.5zM8.25 10.5h7.5M8.25 13.5h4.5" />
+                        </svg>
+                        {{ __('Data Kendaraan Terparkir') }}
+                    </a>
+
                     <a href="{{ route('logs.index') }}" @click="if (window.innerWidth < 1024) { sidebarOpen = false; }"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

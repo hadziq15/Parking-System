@@ -59,19 +59,22 @@
     <div class="ticket">
         <div class="brand">PARKING</div>
         <div class="label">Karcis Keluar</div>
-        <div class="barcode">{{ $transaction->nomor_karcis }}</div>
+        <div class="barcode">{{ $nomor_karcis ?? '-' }}</div>
 
         <div class="label">Plat Nomor</div>
-        <div class="value">{{ $transaction->plat_nomor }}</div>
+        <div class="value">{{ $plat_nomor ?? '-' }}</div>
+
+        <div class="label">Jenis Kendaraan</div>
+        <div class="value">{{ $jenis_kendaraan ?? 'Tidak diketahui' }}</div>
 
         <div class="label">Area</div>
-        <div class="value">{{ $transaction->areaParkir?->nama ?? '-' }}</div>
+        <div class="value">{{ $area_nama ?? '-' }}</div>
 
         <div class="label">Waktu Keluar</div>
-        <div class="value">{{ $transaction->waktu_keluar?->format('d M Y H:i') ?? '-' }}</div>
+        <div class="value">{{ $waktu_keluar ?? '-' }}</div>
 
         <div class="label">Total Bayar</div>
-        <div class="value">Rp {{ number_format((int) ($transaction->total_bayar ?? 0), 0, ',', '.') }}</div>
+        <div class="value">Rp {{ number_format((int) ($total_bayar ?? 0), 0, ',', '.') }}</div>
 
         <div class="divider"></div>
         <div class="small">Terima kasih, semoga perjalanan Anda nyaman.</div>

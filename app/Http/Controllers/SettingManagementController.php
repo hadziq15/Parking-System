@@ -35,7 +35,7 @@ class SettingManagementController extends Controller
             'description' => ['nullable', 'string', 'max:255'],
         ]);
 
-        Setting::updateOrCreate(
+        $setting = Setting::updateOrCreate(
             ['key' => $validated['key']],
             [
                 'value' => $validated['value'] ?? '',
@@ -43,7 +43,12 @@ class SettingManagementController extends Controller
             ],
         );
 
-        return redirect()->route('management.setting.index')->with('success', 'Pengaturan berhasil disimpan.');
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Pengaturan disimpan: ' . $setting->key . ' = ' . $setting->value,
+        ]);
+
+        return redirect()->back()->with('success', 'Pengaturan berhasil disimpan.');
     }
 
     public function saveBulk(Request $request): RedirectResponse
@@ -63,15 +68,23 @@ class SettingManagementController extends Controller
 
         Log::create([
             'user_id' => Auth::id(),
-            'action' => 'Mengubah pengaturan parkir: '.json_encode(array_keys($settings)),
+            'action' => 'Mengubah pengaturan parkir: ' . json_encode(array_keys($settings)),
         ]);
 
-        return redirect()->route('management.setting.index')->with('success', 'Pengaturan berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Pengaturan berhasil diperbarui.');
     }
 
     public function destroy(Setting $setting): RedirectResponse
     {
+        $keySetting = $setting->key;
+        $valueSetting = $setting->value;
+
         $setting->delete();
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Pengaturan dihapus: ' . $keySetting . ' = ' . $valueSetting,
+        ]);
 
         return redirect()->route('management.setting.index')->with('success', 'Pengaturan berhasil dihapus.');
     }

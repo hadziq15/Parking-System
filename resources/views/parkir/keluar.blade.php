@@ -11,9 +11,9 @@
                 <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
                     <div>{{ session('success') }}</div>
                     @if (session('exit_ticket_url'))
-                        <a href="{{ session('exit_ticket_url') }}" class="mt-2 inline-block font-semibold underline" target="_blank" rel="noopener noreferrer">
-                            Download karcis PDF
-                        </a>
+                        <button type="button" data-open-ticket="{{ session('exit_ticket_url') }}" class="mt-2 inline-block font-semibold underline text-emerald-700 hover:text-emerald-800">
+                            Buka karcis PDF
+                        </button>
                     @endif
                 </div>
             @endif
@@ -52,36 +52,56 @@
                 </form>
             </div>
 
-            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200 text-left text-sm text-slate-700">
-                        <thead class="bg-slate-50 text-xs uppercase tracking-[0.12em] text-slate-500">
-                            <tr>
-                                <th class="px-4 py-3">Nomor Polisi</th>
-                                <th class="px-4 py-3">Nomor Karcis</th>
-                                <th class="px-4 py-3">Jenis Pelanggan</th>
-                                <th class="px-4 py-3">Area</th>
-                                <th class="px-4 py-3">Waktu Masuk</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            @forelse ($activeTransactions as $transaction)
-                                <tr class="hover:bg-slate-50">
-                                    <td class="px-4 py-3 font-medium text-slate-800">{{ $transaction->plat_nomor }}</td>
-                                    <td class="px-4 py-3 font-medium text-slate-800">{{ $transaction->nomor_karcis ?? '-' }}</td>
-                                    <td class="px-4 py-3">{{ $transaction->jenisPelanggan?->nama ?? 'Reguler' }}</td>
-                                    <td class="px-4 py-3">{{ $transaction->areaParkir?->nama ?? '-' }}</td>
-                                    <td class="px-4 py-3">{{ $transaction->waktu_masuk?->format('d M Y H:i') ?? '-' }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="px-4 py-8 text-center text-slate-500">Belum ada kendaraan yang sedang parkir.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                Lihat daftar kendaraan yang masih terparkir di halaman
+                <a href="{{ route('parkir.terparkir') }}" class="font-semibold text-indigo-600 underline">Data Kendaraan Terparkir</a>.
             </div>
         </div>
     </div>
+
+    @if (session('exit_ticket_url'))
+        <div id="ticket-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">
+            <div class="flex h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+                <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                    <h3 class="text-base font-semibold text-slate-800">Preview Karcis</h3>
+                    <button type="button" id="close-ticket-modal" class="rounded-lg border border-slate-200 px-2 py-1 text-sm text-slate-600 hover:bg-slate-100">Tutup</button>
+                </div>
+                <iframe src="{{ session('exit_ticket_url') }}" class="h-full w-full bg-white" title="Karcis PDF"></iframe>
+            </div>
+        </div>
+    @endif
+
+    <script>
+        const ticketModal = document.getElementById('ticket-modal');
+        const closeTicketModalButton = document.getElementById('close-ticket-modal');
+
+        if (ticketModal && closeTicketModalButton) {
+            closeTicketModalButton.addEventListener('click', function () {
+                ticketModal.classList.add('hidden');
+            });
+
+            ticketModal.addEventListener('click', function (event) {
+                if (event.target === ticketModal) {
+                    ticketModal.classList.add('hidden');
+                }
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            const trigger = event.target.closest('[data-open-ticket]');
+            if (!trigger) {
+                return;
+            }
+
+            if (ticketModal) {
+                ticketModal.classList.remove('hidden');
+                const iframe = ticketModal.querySelector('iframe');
+                if (iframe) {
+                    iframe.src = trigger.dataset.openTicket;
+                }
+            } else {
+                window.open(trigger.dataset.openTicket, '_blank', 'noopener,noreferrer');
+            }
+        });
+    </script>
 </x-app-layout>

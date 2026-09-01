@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\AreaParkir;
 use App\Models\JenisPelanggan;
+use App\Models\Log;
 use App\Models\Tarif;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class AreaManagementController extends Controller
@@ -44,6 +46,11 @@ class AreaManagementController extends Controller
         $area = AreaParkir::create($validated);
         $area->jenisPelanggans()->sync($validated['jenis_pelanggan_ids'] ?? []);
 
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Area parkir ditambahkan: '.$area->nama.' ('.$area->lokasi.')',
+        ]);
+
         return redirect()->route('management.area.index')->with('success', 'Area parkir berhasil ditambahkan.');
     }
 
@@ -61,12 +68,25 @@ class AreaManagementController extends Controller
         $areaParkir->update($validated);
         $areaParkir->jenisPelanggans()->sync($validated['jenis_pelanggan_ids'] ?? []);
 
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Area parkir diperbarui: '.$areaParkir->nama.' ('.$areaParkir->lokasi.')',
+        ]);
+
         return redirect()->route('management.area.index')->with('success', 'Area parkir berhasil diperbarui.');
     }
 
     public function destroy(AreaParkir $areaParkir): RedirectResponse
     {
+        $namaArea = $areaParkir->nama;
+        $lokasiArea = $areaParkir->lokasi;
+
         $areaParkir->delete();
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Area parkir dihapus: '.$namaArea.' ('.$lokasiArea.')',
+        ]);
 
         return redirect()->route('management.area.index')->with('success', 'Area parkir berhasil dihapus.');
     }

@@ -11,9 +11,9 @@
                 <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
                     <div>{{ session('success') }}</div>
                     @if (session('ticket_url'))
-                        <a href="{{ session('ticket_url') }}" class="mt-2 inline-block font-semibold underline" target="_blank" rel="noopener noreferrer">
-                            Download karcis PDF
-                        </a>
+                        <button type="button" data-open-ticket="{{ session('ticket_url') }}" class="mt-2 inline-block font-semibold underline text-emerald-700 hover:text-emerald-800">
+                            Buka karcis PDF
+                        </button>
                     @endif
                 </div>
             @endif
@@ -96,12 +96,26 @@
         </div>
     </div>
 
+    @if (session('ticket_url'))
+        <div id="ticket-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">
+            <div class="flex h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+                <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                    <h3 class="text-base font-semibold text-slate-800">Preview Karcis</h3>
+                    <button type="button" id="close-ticket-modal" class="rounded-lg border border-slate-200 px-2 py-1 text-sm text-slate-600 hover:bg-slate-100">Tutup</button>
+                </div>
+                <iframe src="{{ session('ticket_url') }}" class="h-full w-full bg-white" title="Karcis PDF"></iframe>
+            </div>
+        </div>
+    @endif
+
     <script>
         const registeredVehicles = @json($registeredVehicles);
         const platInput = document.getElementById('plat_nomor');
         const vehicleTypeSelect = document.getElementById('jenis_kendaraan');
         const areaSelect = document.getElementById('area_parkir_id');
         const vehicleInfo = document.getElementById('vehicle-info');
+        const ticketModal = document.getElementById('ticket-modal');
+        const closeTicketModalButton = document.getElementById('close-ticket-modal');
 
         function filterAreaByVehicleType(selectedType) {
             const optionList = Array.from(areaSelect.options);
@@ -151,6 +165,35 @@
             vehicleInfo.textContent = 'Jenis pelanggan: ' + jenisPelanggan;
             vehicleInfo.classList.remove('hidden');
         }
+
+        if (ticketModal && closeTicketModalButton) {
+            closeTicketModalButton.addEventListener('click', function () {
+                ticketModal.classList.add('hidden');
+            });
+
+            ticketModal.addEventListener('click', function (event) {
+                if (event.target === ticketModal) {
+                    ticketModal.classList.add('hidden');
+                }
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            const trigger = event.target.closest('[data-open-ticket]');
+            if (!trigger) {
+                return;
+            }
+
+            if (ticketModal) {
+                ticketModal.classList.remove('hidden');
+                const iframe = ticketModal.querySelector('iframe');
+                if (iframe) {
+                    iframe.src = trigger.dataset.openTicket;
+                }
+            } else {
+                window.open(trigger.dataset.openTicket, '_blank', 'noopener,noreferrer');
+            }
+        });
 
         vehicleTypeSelect.addEventListener('change', function () {
             filterAreaByVehicleType(this.value);

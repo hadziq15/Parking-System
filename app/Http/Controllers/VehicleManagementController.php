@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\JenisPelanggan;
 use App\Models\Kendaraan;
+use App\Models\Log;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class VehicleManagementController extends Controller
@@ -36,7 +38,12 @@ class VehicleManagementController extends Controller
             'jenis_pelanggan_id' => ['nullable', 'uuid', 'exists:jenis_pelanggans,id'],
         ]);
 
-        Kendaraan::create($validated);
+        $kendaraan = Kendaraan::create($validated);
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Kendaraan ditambahkan: '.$kendaraan->plat_nomor.' ('.$kendaraan->pemilik.')',
+        ]);
 
         return redirect()->route('management.vehicle.index')->with('success', 'Kendaraan berhasil ditambahkan.');
     }
@@ -53,12 +60,25 @@ class VehicleManagementController extends Controller
 
         $kendaraan->update($validated);
 
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Kendaraan diperbarui: '.$kendaraan->plat_nomor.' ('.$kendaraan->pemilik.')',
+        ]);
+
         return redirect()->route('management.vehicle.index')->with('success', 'Kendaraan berhasil diperbarui.');
     }
 
     public function destroy(Kendaraan $kendaraan): RedirectResponse
     {
+        $platNomor = $kendaraan->plat_nomor;
+        $pemilik = $kendaraan->pemilik;
+
         $kendaraan->delete();
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'action' => 'Kendaraan dihapus: '.$platNomor.' ('.$pemilik.')',
+        ]);
 
         return redirect()->route('management.vehicle.index')->with('success', 'Kendaraan berhasil dihapus.');
     }
