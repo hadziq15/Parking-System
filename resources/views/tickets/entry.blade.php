@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Template karcis masuk ini menampilkan informasi kendaraan saat masuk ke parkir, seperti nomor karcis, plat, jenis kendaraan, area, dan waktu masuk.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

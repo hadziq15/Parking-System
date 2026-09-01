@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Komponen modal ini dipakai untuk popup interaksi seperti konfirmasi atau preview.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 @props([
     'name',
     'show' => false,

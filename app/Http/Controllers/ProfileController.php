@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * Catatan pembelajaran
+ * Controller ini menangani proses edit profil pengguna seperti update data akun dan perubahan password sesuai autentikasi Laravel.
+ * Prinsip umum: request -> validasi -> model -> response.
+ */
+
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
@@ -13,7 +20,11 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Menampilkan form profil user.
+     *
+     * Fungsi edit memuat data user yang sedang login supaya form profil dapat menampilkan
+     * nama, email, dan informasi akun yang relevan. Ini adalah halaman untuk mengubah data
+     * diri sendiri, bukan data user lain.
      */
     public function edit(Request $request): View
     {
@@ -23,7 +34,11 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile information.
+     * Memperbarui data profil user.
+     *
+     * Fungsi update menerima request dari form profile. Jika email berubah, sistem akan
+     * mengatur ulang email_verified_at karena email perlu diverifikasi ulang. Setelah data
+     * disimpan, user akan dikembalikan ke halaman profil dengan status update.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
@@ -46,7 +61,11 @@ class ProfileController extends Controller
     }
 
     /**
-     * Delete the user's account.
+     * Menghapus akun user yang sedang login.
+     *
+     * Fungsi destroy memvalidasi password saat ini agar proses penghapusan akun aman.
+     * Setelah logout dan log disimpan, akun akan dihapus dari database. Ini adalah aksi
+     * sensitif yang harus melalui konfirmasi password.
      */
     public function destroy(Request $request): RedirectResponse
     {

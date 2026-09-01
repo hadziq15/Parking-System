@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Komponen ini untuk navigasi yang responsif di tampilan mobile dan desktop.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 @props(['active'])
 
 @php

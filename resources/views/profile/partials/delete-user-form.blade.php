@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Bagian form penghapusan user ini menyiapkan form konfirmasi untuk hapus akun dengan langkah keamanan tambahan.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <section class="space-y-6">
     <header>
         <h2 class="text-lg font-medium text-gray-900">

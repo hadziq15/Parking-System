@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Komponen dropdown ini menyiapkan elemen menu interaktif untuk navigasi atau aksi.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 @props(['align' => 'right', 'width' => '48', 'contentClasses' => 'py-1 bg-white'])
 
 @php

@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Halaman profil ini menampilkan form edit data diri dan pengaturan password user.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">

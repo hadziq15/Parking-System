@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Halaman ini menangani proses penggantian password berdasarkan token dari email reset password.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-guest-layout>
     <form method="POST" action="{{ route('password.store') }}">
         @csrf

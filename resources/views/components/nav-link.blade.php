@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Komponen link navigasi ini membantu pembuatan menu dengan status aktif otomatis.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 @props(['active'])
 
 @php

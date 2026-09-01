@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * Catatan pembelajaran
+ * Controller ini mengelola pengaturan aplikasi seperti batas waktu grace period, tarif denda, dan konfigurasi sistem yang dipakai saat proses parkir.
+ * Prinsip umum: request -> validasi -> model -> response.
+ */
+
+
 namespace App\Http\Controllers;
 
 use App\Models\Log;
@@ -12,8 +19,11 @@ use Illuminate\View\View;
 class SettingManagementController extends Controller
 {
     /**
-     * Menampilkan konfigurasi sistem yang dipakai dalam logika parkir seperti
-     * denda, grace period, dan aturan tarif.
+     * Menampilkan halaman pengaturan aplikasi.
+     *
+     * Fungsi index menyiapkan semua setting yang dipakai sistem parkir, seperti denda,
+     * masa tenggang, dan aturan lain yang memengaruhi hitung biaya. Ini penting karena
+     * banyak fitur parkir membacanya secara dinamis, bukan hardcode di controller.
      */
     public function index(): View
     {
@@ -23,9 +33,15 @@ class SettingManagementController extends Controller
     }
 
     /**
-     * Menyimpan satu pengaturan baru atau memperbarui nilai yang sudah ada.
-     * Karena pengaturan ini dibaca oleh banyak bagian aplikasi, validasi dan
-     * struktur key harus tetap stabil agar tidak merusak logika parkir.
+     * Menyimpan satu setting baru atau memperbarui setting yang sudah ada.
+     *
+     * Input yang umum masuk:
+     * - key: nama pengaturan, misalnya denda_karcis_hilang atau menit_grace_period.
+     * - value: nilai pengaturan.
+     * - description: keterangan singkat untuk admin.
+     *
+     * Karena pengaturan ini dibaca di banyak tempat, struktur key harus konsisten supaya
+     * logic parkir tetap berjalan sesuai yang diinginkan.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -51,6 +67,13 @@ class SettingManagementController extends Controller
         return redirect()->back()->with('success', 'Pengaturan berhasil disimpan.');
     }
 
+    /**
+     * Menyimpan banyak setting sekaligus dalam satu kali submit.
+     *
+     * Biasanya dipakai untuk form pengaturan yang banyak item, misalnya semua konfigurasi
+     * parkir dalam satu halaman. Fungsi ini menyimpan semua value ke tabel settings secara
+     * bersamaan agar admin tidak perlu satu per satu.
+     */
     public function saveBulk(Request $request): RedirectResponse
     {
         $settings = $request->input('settings', []);
@@ -74,6 +97,12 @@ class SettingManagementController extends Controller
         return redirect()->back()->with('success', 'Pengaturan berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus setting tertentu.
+     *
+     * Fungsi ini digunakan jika sebuah pengaturan tidak lagi dipakai atau ingin dihapus
+     * karena kebijakan berubah. Log dibuat supaya perubahan pengaturan terdokumentasi.
+     */
     public function destroy(Setting $setting): RedirectResponse
     {
         $keySetting = $setting->key;

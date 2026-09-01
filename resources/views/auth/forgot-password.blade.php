@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Halaman reset password ini memungkinkan user meminta tautan penggantian password.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
         {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}

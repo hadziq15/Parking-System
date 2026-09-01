@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Halaman log aktivitas ini menampilkan riwayat operasi yang dilakukan oleh pengguna atau sistem.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-slate-800">

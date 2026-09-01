@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Bagian ini menampilkan form update informasi profil seperti nama, email, dan status akun terkait verifikasi email.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">

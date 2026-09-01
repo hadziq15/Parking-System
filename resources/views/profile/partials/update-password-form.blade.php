@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Bagian ini berisi form perubahan password agar user bisa mengganti password dengan validasi yang aman.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">

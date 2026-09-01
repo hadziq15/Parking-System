@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * Catatan pembelajaran
+ * Controller ini merupakan inti sistem parkir. Di sini terdapat proses kendaraan masuk, kendaraan keluar, pencarian aktif, dan pembuatan preview tiket PDF untuk pembelajaran alur aplikasi.
+ * Prinsip umum: request -> validasi -> model -> response.
+ */
+
+
 namespace App\Http\Controllers;
 
 use App\Models\AreaParkir;
@@ -18,8 +25,14 @@ use Illuminate\View\View;
 class ParkirController extends Controller
 {
     /**
-     * Menyiapkan halaman kendaraan masuk: daftar area parkir, jenis pelanggan,
-     * serta kendaraan yang sudah terdaftar agar operator cepat mengisi form.
+     * Menampilkan form kendaraan masuk.
+     *
+     * Fungsi ini bertugas menyiapkan data yang dibutuhkan untuk halaman masuk parkir,
+     * seperti daftar area parkir, daftar jenis pelanggan, dan kendaraan yang sudah
+     * terdaftar. Data ini dipakai supaya operator tidak perlu mengetik ulang data yang
+     * sering dipakai dan supaya form lebih cepat dipahami.
+     *
+     * @return View halaman masuk parkir dengan data area, jenis pelanggan, dan kendaraan.
      */
     public function masuk(): View
     {
@@ -53,8 +66,16 @@ class ParkirController extends Controller
     }
 
     /**
-     * Proses kendaraan masuk: validasi plat, cek area tarif, serta catat log
-     * aktivitas untuk menjaga riwayat parkir tetap jelas.
+     * Menerima form kendaraan masuk dari operator.
+     *
+     * Input yang dibutuhkan dari form:
+     * - plat_nomor: nomor polisi yang masuk ke area parkir.
+     * - jenis_kendaraan: jenis kendaraan agar sistem bisa memilih tarif yang benar.
+     * - area_parkir_id: area yang dipilih untuk parkir.
+     *
+     * Fungsi ini akan validasi data, memastikan area dan tarif cocok, mengecek apakah
+     * kendaraan sudah aktif masuk atau belum, lalu membuat transaksi baru dan mencatat
+     * log aktivitas. Hasilnya adalah data transaksi baru yang siap dipakai untuk tiket.
      */
     public function storeMasuk(Request $request): RedirectResponse
     {
@@ -135,8 +156,12 @@ class ParkirController extends Controller
     }
 
     /**
-     * Proses kendaraan keluar: menghitung durasi parkir, menerapkan tarif,
-     * dan menghasilkan total akhir yang dibayarkan oleh pelanggan.
+     * Memproses kendaraan keluar dari area parkir.
+     *
+     * Fungsi ini mengolah input nomor polisi atau nomor karcis, mencari transaksi aktif,
+     * menghitung durasi parkir, menetapkan tarif sesuai jenis pelanggan dan kendaraan,
+     * menambahkan denda bila karcis hilang, lalu menutup transaksi. Setelah itu sistem
+     * menyiapkan link preview tiket keluar untuk ditampilkan di halaman.
      */
     public function storeKeluar(Request $request): RedirectResponse
     {
@@ -228,6 +253,13 @@ class ParkirController extends Controller
             ->with('exit_ticket_url', route('parkir.ticket.exit.download', $transaction));
     }
 
+    /**
+     * Menampilkan preview tiket masuk dalam bentuk PDF di browser.
+     *
+     * Parameter $transaction adalah data transaksi aktif yang sudah masuk ke sistem.
+     * Fungsi ini membangun view tiket dan mengirimkan response PDF tanpa attachment,
+     * agar browser menampilkan file di modal/iframe, bukan men-download otomatis.
+     */
     public function previewTicket(Transaksi $transaction)
     {
         $transaction->load(['kendaraan', 'areaParkir', 'jenisPelanggan', 'tarif']);
@@ -238,6 +270,13 @@ class ParkirController extends Controller
         return $pdf->stream('karcis-masuk-'.$transaction->nomor_karcis.'.pdf', ['Attachment' => false]);
     }
 
+    /**
+     * Menampilkan preview tiket keluar dalam bentuk PDF.
+     *
+     * Digunakan setelah kendaraan selesai parkir dan total bayar sudah dihitung.
+     * Tujuan utama fungsi ini adalah menampilkan bukti pembayaran dan informasi
+     * keluar kendaraan secara rapi dalam format PDF yang bisa dilihat di browser.
+     */
     public function previewExitTicket(Transaksi $transaction)
     {
         $transaction->load(['kendaraan', 'areaParkir', 'jenisPelanggan', 'tarif']);

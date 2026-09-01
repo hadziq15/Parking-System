@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * Catatan pembelajaran
+ * Controller ini mengelola tarif parkir dan daftar jenis pelanggan. Data ini sangat penting karena menentukan aturan perhitungan tarif dan validasi parkir.
+ * Prinsip umum: request -> validasi -> model -> response.
+ */
+
+
 namespace App\Http\Controllers;
 
 use App\Models\JenisPelanggan;
@@ -14,8 +21,15 @@ use Illuminate\View\View;
 class TarifManagementController extends Controller
 {
     /**
-     * Menyiapkan data tarif, jenis pelanggan, dan pengaturan aplikasinya
-     * untuk ditampilkan pada halaman manajemen tarif.
+     * Menampilkan halaman utama manajemen tarif dan jenis pelanggan.
+     *
+     * Fungsi index menyiapkan tiga kumpulan data utama:
+     * - tarif parkir: harga berdasarkan jenis kendaraan.
+     * - jenis pelanggan: klasifikasi pelanggan seperti reguler, karyawan, atau member.
+     * - settings: konfigurasi sistem yang memengaruhi denda dan aturan parkir.
+     *
+     * Data ini dipakai di halaman management agar admin bisa mengatur seluruh aturan
+     * perhitungan parkir dari satu tempat.
      */
     public function index(): View
     {
@@ -27,8 +41,15 @@ class TarifManagementController extends Controller
     }
 
     /**
-     * Menyimpan tarif baru dengan validasi jenis kendaraan dan nominal.
-     * Nilai ini nanti dipakai saat perhitungan pembayaran parkir.
+     * Menyimpan tarif baru untuk jenis kendaraan tertentu.
+     *
+     * Input penting:
+     * - jenis_kendaraan: mobil atau motor.
+     * - tarif_jam_pertama: harga untuk jam pertama.
+     * - tarif_jam_berikutnya: harga untuk jam berikutnya.
+     *
+     * Nilai ini sangat penting karena semua perhitungan saat kendaraan keluar bergantung
+     * pada tarif ini. Jika tarif salah, total pembayaran juga akan salah.
      */
     public function storeTarif(Request $request): RedirectResponse
     {
@@ -50,6 +71,12 @@ class TarifManagementController extends Controller
             ->with('active_tab', $request->input('active_tab', 'tarif'));
     }
 
+    /**
+     * Mengubah tarif yang sudah ada.
+     *
+     * Fungsi updateTarif dipanggil saat admin ingin memperbarui harga parkir,
+     * misalnya karena ada perubahan kebijakan atau saat data lama perlu dikoreksi.
+     */
     public function updateTarif(Request $request, Tarif $tarif): RedirectResponse
     {
         $validated = $request->validate([
@@ -70,6 +97,12 @@ class TarifManagementController extends Controller
             ->with('active_tab', $request->input('active_tab', 'tarif'));
     }
 
+    /**
+     * Menghapus tarif lama.
+     *
+     * Fungsi ini dipakai saat tarif tidak lagi relevan. Sebelum benar-benar dihapus,
+     * sistem menyimpan data lama ke log agar admin bisa melihat perubahan yang terjadi.
+     */
     public function destroyTarif(Request $request, Tarif $tarif): RedirectResponse
     {
         $jenisKendaraan = $tarif->jenis_kendaraan;
@@ -89,8 +122,16 @@ class TarifManagementController extends Controller
     }
 
     /**
-     * Menyimpan konfigurasi jenis pelanggan, termasuk status khusus seperti
-     * bebas denda dan gratis parkir yang memengaruhi perhitungan akhir.
+     * Menyimpan data jenis pelanggan baru.
+     *
+     * Input utama adalah nama jenis pelanggan dan status aktif/nonaktif. Selain itu,
+     * ada juga checkbox khusus seperti:
+     * - is_gratis_parkir: kalau true, pelanggan tidak bayar parkir.
+     * - is_parkir_flat: kalau true, tarif dihitung flat sesuai kebijakan.
+     * - is_bebas_denda: kalau true, pelanggan tidak terkena denda karcis hilang.
+     *
+     * Nilai-nilai ini sangat penting karena memengaruhi logika pembayaran akhir saat
+     * kendaraan keluar.
      */
     public function storeJenisPelanggan(Request $request): RedirectResponse
     {
@@ -118,6 +159,12 @@ class TarifManagementController extends Controller
             ->with('active_tab', $request->input('active_tab', 'jenis'));
     }
 
+    /**
+     * Mengubah data jenis pelanggan yang sudah dibuat.
+     *
+     * Fungsi ini dipanggil ketika admin menyesuaikan kebijakan pelanggan, misalnya
+     * mengubah status aktif/nonaktif atau memberi hak bebas parkir/denda.
+     */
     public function updateJenisPelanggan(Request $request, JenisPelanggan $jenisPelanggan): RedirectResponse
     {
         $validated = $request->validate([
@@ -142,6 +189,12 @@ class TarifManagementController extends Controller
             ->with('active_tab', $request->input('active_tab', 'jenis'));
     }
 
+    /**
+     * Menghapus jenis pelanggan.
+     *
+     * Biasanya dipakai saat registrasi pelanggan sudah tidak berlaku lagi. Data yang
+     * dihapus tetap dicatat di log agar admin tahu perubahan yang terjadi.
+     */
     public function destroyJenisPelanggan(Request $request, JenisPelanggan $jenisPelanggan): RedirectResponse
     {
         $namaJenis = $jenisPelanggan->nama;

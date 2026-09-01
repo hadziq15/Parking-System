@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    View Blade ini menampilkan tampilan halaman aplikasi. Komponen utama seperti form, tabel, dan modal dipasang di sini, lalu diberi data dari controller melalui compact() atau session().
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-slate-800">
@@ -15,6 +21,15 @@
             </div>
 
             <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                {{--
+                    Tabel ini menampilkan kendaraan yang saat ini masih terparkir dan belum keluar.
+                    Kolom yang penting:
+                    - Nomor Polisi: identitas kendaraan.
+                    - Nomor Karcis: bukti masuk kendaraan.
+                    - Jenis Pelanggan: status pelanggan seperti reguler/karyawan/member.
+                    - Area: area parkir tempat kendaraan masuk.
+                    - Aksi: tombol untuk membuka preview tiket PDF.
+                --}}
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200 text-left text-sm text-slate-700">
                         <thead class="bg-slate-50 text-xs uppercase tracking-[0.12em] text-slate-500">

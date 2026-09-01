@@ -1,4 +1,10 @@
 {{--
+    Catatan pembelajaran:
+    View Blade ini menampilkan tampilan halaman aplikasi. Komponen utama seperti form, tabel, dan modal dipasang di sini, lalu diberi data dari controller melalui compact() atau session().
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
+{{{--
     Sidebar navigasi.
     Di-include dari layouts/app.blade.php, yang menyediakan state Alpine
     "sidebarOpen" lewat x-data di elemen <body>.

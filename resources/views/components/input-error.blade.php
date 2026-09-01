@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Komponen ini menampilkan pesan error validasi di bawah input form.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 @props(['messages'])
 
 @if ($messages)

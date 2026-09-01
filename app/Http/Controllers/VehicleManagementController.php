@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * Catatan pembelajaran
+ * Controller ini menangani data kendaraan yang sudah terdaftar, seperti pemilik, merk, warna, jenis kendaraan, dan nomor polisi untuk keperluan pencatatan parkir.
+ * Prinsip umum: request -> validasi -> model -> response.
+ */
+
+
 namespace App\Http\Controllers;
 
 use App\Models\JenisPelanggan;
@@ -13,8 +20,11 @@ use Illuminate\View\View;
 class VehicleManagementController extends Controller
 {
     /**
-     * Menampilkan kendaraan yang sudah terdaftar serta daftar jenis pelanggan
-     * untuk mempermudah pengelolaan data kendaraan di parkir.
+     * Menampilkan halaman manajemen kendaraan.
+     *
+     * Fungsi index mengambil data kendaraan yang sudah terdaftar dan data jenis pelanggan
+     * agar form tambah/edit bisa menampilkan opsi yang relevan. Dengan begitu operator
+     * tidak perlu menulis data kendaraan dari awal setiap kali kendaraan masuk.
      */
     public function index(): View
     {
@@ -25,8 +35,17 @@ class VehicleManagementController extends Controller
     }
 
     /**
-     * Menyimpan data kendaraan baru. Validasi panjang nomor plat dan jenis
-     * kendaraan dibuat agar data tetap konsisten dengan skema migrasi.
+     * Menyimpan kendaraan baru yang sudah terdaftar.
+     *
+     * Input yang biasanya dipakai:
+     * - pemilik: nama pemilik kendaraan.
+     * - plat_nomor: nomor polisi kendaraan.
+     * - jenis_kendaraan: mobil, motor, atau truk.
+     * - warna: warna kendaraan.
+     * - jenis_pelanggan_id: relasi dengan jenis pelanggan tertentu.
+     *
+     * Fungsi ini memastikan data kendaraan tetap konsisten dan bisa dipakai untuk
+     * validasi saat kendaraan masuk ke parkir berikutnya.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -48,6 +67,12 @@ class VehicleManagementController extends Controller
         return redirect()->route('management.vehicle.index')->with('success', 'Kendaraan berhasil ditambahkan.');
     }
 
+    /**
+     * Mengubah data kendaraan yang sudah ada.
+     *
+     * Fungsi update dipakai saat data pemilik, nomor polisi, jenis kendaraan, atau warna
+     * berubah. Tujuannya agar data kendaraan tetap akurat untuk transaksi parkir masa depan.
+     */
     public function update(Request $request, Kendaraan $kendaraan): RedirectResponse
     {
         $validated = $request->validate([
@@ -68,6 +93,13 @@ class VehicleManagementController extends Controller
         return redirect()->route('management.vehicle.index')->with('success', 'Kendaraan berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus data kendaraan dari database.
+     *
+     * Fungsi destroy biasanya dipanggil jika kendaraan sudah tidak berlaku lagi, misalnya
+     * karena dijual atau data sudah tidak relevan. Setelah dihapus, sistem akan mencatat
+     * log agar aktivitas penghapusan tetap terlihat.
+     */
     public function destroy(Kendaraan $kendaraan): RedirectResponse
     {
         $platNomor = $kendaraan->plat_nomor;

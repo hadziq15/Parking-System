@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * Catatan pembelajaran
+ * Controller ini digunakan untuk mengelola data pengguna aplikasi, termasuk menambah, memperbarui, dan menghapus akun pengguna.
+ * Prinsip umum: request -> validasi -> model -> response.
+ */
+
+
 namespace App\Http\Controllers;
 
 use App\Models\Log;
@@ -14,8 +21,11 @@ use Illuminate\View\View;
 class UserManagementController extends Controller
 {
     /**
-     * Menampilkan user yang tersedia dan melakukan pencarian untuk memudahkan
-     * proses pengelolaan akses aplikasi.
+     * Menampilkan halaman daftar user.
+     *
+     * Fungsi index menyiapkan data pengguna yang bisa dilihat oleh admin. Jika ada kata
+     * kunci pencarian, sistem akan memfilter berdasarkan nama atau email supaya daftar
+     * lebih mudah dicari. Ini adalah fungsi utama untuk halaman user management.
      */
     public function index(Request $request): View
     {
@@ -35,8 +45,15 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Menambahkan user baru dengan password yang dikonversi ke hash agar aman
-     * dan tidak disimpan dalam bentuk plain text.
+     * Menambahkan user baru ke sistem.
+     *
+     * Input penting:
+     * - name: nama lengkap user.
+     * - email: email akun.
+     * - password: password yang akan di-hash agar aman.
+     * - role: peran user seperti admin, user, atau owner.
+     *
+     * Fungsi ini juga mencatat log karena penambahan user adalah tindakan penting di sistem.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -62,6 +79,12 @@ class UserManagementController extends Controller
         return redirect()->route('user-management.index')->with('success', 'User berhasil ditambahkan.');
     }
 
+    /**
+     * Mengubah data user yang sudah ada.
+     *
+     * Fungsi ini dipanggil saat admin ingin mengubah nama, email, role, atau password
+     * user. Ini adalah bagian yang menjaga kebijakan akses tetap sesuai kebutuhan aplikasi.
+     */
     public function update(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
@@ -95,6 +118,13 @@ class UserManagementController extends Controller
         return redirect()->route('user-management.index')->with('success', 'User berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus user dari sistem.
+     *
+     * Fungsi destroy melindungi beberapa akun penting seperti super admin dan akun sendiri
+     * supaya tidak bisa dihapus sembarangan. Setelah penghapusan, log akan dibuat untuk
+     * audit trail.
+     */
     public function destroy(User $user): RedirectResponse
     {
         if ($user->role === 'super_admin') {

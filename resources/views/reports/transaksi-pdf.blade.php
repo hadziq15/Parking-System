@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Template PDF laporan transaksi ini dirancang untuk cetak. Layout dibuat ringkas agar mudah dibaca saat dicetak ke PDF.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Halaman ini meminta konfirmasi password sebelum aksi sensitif dilakukan.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
         {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}

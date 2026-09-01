@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    View Blade ini menampilkan tampilan halaman aplikasi. Komponen utama seperti form, tabel, dan modal dipasang di sini, lalu diberi data dari controller melalui compact() atau session().
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-slate-800">
@@ -42,6 +48,14 @@
             @endif
 
             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                {{--
+                    Form ini dipakai untuk mencatat kendaraan yang baru masuk ke area parkir.
+                    Input yang utama:
+                    - plat_nomor: nomor polisi kendaraan yang ingin masuk.
+                    - jenis_kendaraan: mobil/motor/truk supaya sistem bisa pilih tarif yang benar.
+                    - area_parkir_id: area parkir tujuan (misalnya area motor atau area mobil).
+                    Semua data ini dikirim ke controller ParkirController@storeMasuk untuk diproses.
+                --}}
                 <form method="POST" action="{{ route('parkir.masuk.store') }}" class="space-y-6">
                     @csrf
 

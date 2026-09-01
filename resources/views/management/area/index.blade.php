@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    View Blade ini menampilkan tampilan halaman aplikasi. Komponen utama seperti form, tabel, dan modal dipasang di sini, lalu diberi data dari controller melalui compact() atau session().
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-slate-800">
@@ -102,6 +108,15 @@
         </div>
 
         <div x-show="modalOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
+            {{--
+                Modal area dipakai untuk menambah atau mengubah area parkir.
+                Input yang penting:
+                - nama: nama area seperti Gedung A atau Lapangan A.
+                - lokasi: penempatan lokasi area.
+                - kapasitas: jumlah kendaraan maksimal.
+                - tarif_id: tarif yang berlaku di area tersebut.
+                - jenis_pelanggan_ids: pelanggan yang boleh masuk ke area tertentu.
+            --}}
             <div class="absolute inset-0 bg-slate-900/50" @click="modalOpen = false"></div>
             <div class="relative w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl">
                 <div class="mb-6 flex items-center justify-between">

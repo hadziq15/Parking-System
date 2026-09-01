@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Halaman login menampilkan form masuk ke aplikasi. Blade view ini biasanya berisi input email/password dan tombol submit.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />

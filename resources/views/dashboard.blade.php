@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Dashboard menampilkan ringkasan data parkir hari ini: jumlah transaksi, kendaraan masuk, pendapatan, dan area parkir yang sedang terisi.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-slate-800">
@@ -7,6 +13,13 @@
 
     <div class="py-8">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {{--
+                Kartu-kartu ini menampilkan ringkasan cepat sistem parkir:
+                - Transaksi Hari Ini: total kendaraan yang tercatat hari ini.
+                - Sedang Terparkir: kendaraan yang belum keluar dari area parkir.
+                - Pendapatan Hari Ini: total uang yang masuk dari transaksi keluar.
+                - Area Parkir: jumlah area yang aktif dan siap dipakai.
+            --}}
             <div class="mb-6 grid gap-4 md:grid-cols-4">
                 <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                     <div class="flex items-center justify-between">

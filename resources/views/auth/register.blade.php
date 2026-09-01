@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Halaman registrasi menampilkan form pendaftaran user baru ke aplikasi.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf

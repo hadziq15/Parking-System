@@ -1,3 +1,9 @@
+{{--
+    Catatan pembelajaran:
+    Template karcis keluar ini menampilkan total bayar dan informasi kendaraan saat keluar dari area parkir.
+    Struktur dasar view: menerima data, menampilkan HTML, lalu menyisipkan interaksi JavaScript jika diperlukan.
+--}}
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
