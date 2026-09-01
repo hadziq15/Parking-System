@@ -11,6 +11,10 @@ use Illuminate\View\View;
 
 class SettingManagementController extends Controller
 {
+    /**
+     * Menampilkan konfigurasi sistem yang dipakai dalam logika parkir seperti
+     * denda, grace period, dan aturan tarif.
+     */
     public function index(): View
     {
         $settings = Setting::orderBy('key')->get();
@@ -18,6 +22,11 @@ class SettingManagementController extends Controller
         return view('management.setting.index', compact('settings'));
     }
 
+    /**
+     * Menyimpan satu pengaturan baru atau memperbarui nilai yang sudah ada.
+     * Karena pengaturan ini dibaca oleh banyak bagian aplikasi, validasi dan
+     * struktur key harus tetap stabil agar tidak merusak logika parkir.
+     */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -54,7 +63,7 @@ class SettingManagementController extends Controller
 
         Log::create([
             'user_id' => Auth::id(),
-            'action' => 'Mengubah pengaturan parkir: ' . json_encode(array_keys($settings)),
+            'action' => 'Mengubah pengaturan parkir: '.json_encode(array_keys($settings)),
         ]);
 
         return redirect()->route('management.setting.index')->with('success', 'Pengaturan berhasil diperbarui.');

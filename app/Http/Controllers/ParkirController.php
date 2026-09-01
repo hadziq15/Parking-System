@@ -17,6 +17,10 @@ use Illuminate\View\View;
 
 class ParkirController extends Controller
 {
+    /**
+     * Menyiapkan halaman kendaraan masuk: daftar area parkir, jenis pelanggan,
+     * serta kendaraan yang sudah terdaftar agar operator cepat mengisi form.
+     */
     public function masuk(): View
     {
         $areas = AreaParkir::with('tarif')->orderBy('nama')->get();
@@ -43,6 +47,10 @@ class ParkirController extends Controller
         return view('parkir.keluar', compact('activeTransactions'));
     }
 
+    /**
+     * Proses kendaraan masuk: validasi plat, cek area tarif, serta catat log
+     * aktivitas untuk menjaga riwayat parkir tetap jelas.
+     */
     public function storeMasuk(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -67,7 +75,7 @@ class ParkirController extends Controller
 
         if ($registeredVehicle && strtolower((string) $registeredVehicle->jenis_kendaraan) !== strtolower((string) $validated['jenis_kendaraan'])) {
             return back()->withInput()->withErrors([
-                'plat_nomor' => 'Nomor polisi ini terdaftar dengan jenis kendaraan ' . strtolower((string) $registeredVehicle->jenis_kendaraan) . '. Silakan sesuaikan jenis kendaraan.',
+                'plat_nomor' => 'Nomor polisi ini terdaftar dengan jenis kendaraan '.strtolower((string) $registeredVehicle->jenis_kendaraan).'. Silakan sesuaikan jenis kendaraan.',
             ]);
         }
 
@@ -81,7 +89,7 @@ class ParkirController extends Controller
 
         if ($area->tarif->jenis_kendaraan !== strtolower((string) $validated['jenis_kendaraan'])) {
             return back()->withInput()->withErrors([
-                'area_parkir_id' => 'Area parkir yang dipilih tidak sesuai dengan jenis kendaraan ' . strtolower((string) $validated['jenis_kendaraan']) . '.',
+                'area_parkir_id' => 'Area parkir yang dipilih tidak sesuai dengan jenis kendaraan '.strtolower((string) $validated['jenis_kendaraan']).'.',
             ]);
         }
 
@@ -112,14 +120,18 @@ class ParkirController extends Controller
 
         Log::create([
             'user_id' => Auth::id(),
-            'action' => 'Kendaraan masuk: ' . $platNomor . ' (' . $jenisPelanggan->nama . ') | Nomor karcis: ' . $transaction->nomor_karcis,
+            'action' => 'Kendaraan masuk: '.$platNomor.' ('.$jenisPelanggan->nama.') | Nomor karcis: '.$transaction->nomor_karcis,
         ]);
 
         return redirect()->route('parkir.masuk')
-            ->with('success', 'Kendaraan berhasil masuk ke area parkir. Nomor karcis: ' . $transaction->nomor_karcis)
+            ->with('success', 'Kendaraan berhasil masuk ke area parkir. Nomor karcis: '.$transaction->nomor_karcis)
             ->with('ticket_url', route('parkir.ticket.download', $transaction));
     }
 
+    /**
+     * Proses kendaraan keluar: menghitung durasi parkir, menerapkan tarif,
+     * dan menghasilkan total akhir yang dibayarkan oleh pelanggan.
+     */
     public function storeKeluar(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -196,13 +208,13 @@ class ParkirController extends Controller
 
         Log::create([
             'user_id' => Auth::id(),
-            'action' => 'Kendaraan keluar: ' . $transaction->plat_nomor . ' | Durasi ' . $durasiMenit . ' menit | Denda karcis hilang Rp ' . number_format($dendaKarcisHilang, 0, ',', '.') . ' | Total Rp ' . number_format($totalBayar, 0, ',', '.'),
+            'action' => 'Kendaraan keluar: '.$transaction->plat_nomor.' | Durasi '.$durasiMenit.' menit | Denda karcis hilang Rp '.number_format($dendaKarcisHilang, 0, ',', '.').' | Total Rp '.number_format($totalBayar, 0, ',', '.'),
         ]);
 
-        $message = 'Kendaraan keluar berhasil. Total pembayaran: Rp ' . number_format($totalBayar, 0, ',', '.');
+        $message = 'Kendaraan keluar berhasil. Total pembayaran: Rp '.number_format($totalBayar, 0, ',', '.');
 
         if ($karcisHilang) {
-            $message .= ' (Karcis hilang: Rp ' . number_format($dendaKarcisHilang, 0, ',', '.') . ')';
+            $message .= ' (Karcis hilang: Rp '.number_format($dendaKarcisHilang, 0, ',', '.').')';
         }
 
         return redirect()->route('parkir.keluar')
@@ -215,7 +227,7 @@ class ParkirController extends Controller
         $pdf = Pdf::loadView('tickets.entry', ['transaction' => $transaction])
             ->setPaper([0, 0, 220, 420], 'portrait');
 
-        return $pdf->download('karcis-masuk-' . $transaction->nomor_karcis . '.pdf');
+        return $pdf->download('karcis-masuk-'.$transaction->nomor_karcis.'.pdf');
     }
 
     public function downloadExitTicket(Transaksi $transaction)
@@ -223,13 +235,13 @@ class ParkirController extends Controller
         $pdf = Pdf::loadView('tickets.exit', ['transaction' => $transaction])
             ->setPaper([0, 0, 220, 420], 'portrait');
 
-        return $pdf->download('karcis-keluar-' . $transaction->nomor_karcis . '.pdf');
+        return $pdf->download('karcis-keluar-'.$transaction->nomor_karcis.'.pdf');
     }
 
     protected function generateTicketNumber(): string
     {
         do {
-            $nomorKarcis = 'KRC-' . now()->format('ymd') . '-' . strtoupper(Str::random(6));
+            $nomorKarcis = 'KRC-'.now()->format('ymd').'-'.strtoupper(Str::random(6));
         } while (Transaksi::where('nomor_karcis', $nomorKarcis)->exists());
 
         return $nomorKarcis;

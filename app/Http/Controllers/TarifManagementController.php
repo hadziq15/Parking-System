@@ -11,6 +11,10 @@ use Illuminate\View\View;
 
 class TarifManagementController extends Controller
 {
+    /**
+     * Menyiapkan data tarif, jenis pelanggan, dan pengaturan aplikasinya
+     * untuk ditampilkan pada halaman manajemen tarif.
+     */
     public function index(): View
     {
         $tarifs = Tarif::orderBy('created_at', 'desc')->get();
@@ -20,6 +24,10 @@ class TarifManagementController extends Controller
         return view('management.tarif.index', compact('tarifs', 'jenisPelanggan', 'settings'));
     }
 
+    /**
+     * Menyimpan tarif baru dengan validasi jenis kendaraan dan nominal.
+     * Nilai ini nanti dipakai saat perhitungan pembayaran parkir.
+     */
     public function storeTarif(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -59,6 +67,10 @@ class TarifManagementController extends Controller
             ->with('active_tab', $request->input('active_tab', 'tarif'));
     }
 
+    /**
+     * Menyimpan konfigurasi jenis pelanggan, termasuk status khusus seperti
+     * bebas denda dan gratis parkir yang memengaruhi perhitungan akhir.
+     */
     public function storeJenisPelanggan(Request $request): RedirectResponse
     {
         $validated = $request->validate([

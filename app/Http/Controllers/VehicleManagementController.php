@@ -10,6 +10,10 @@ use Illuminate\View\View;
 
 class VehicleManagementController extends Controller
 {
+    /**
+     * Menampilkan kendaraan yang sudah terdaftar serta daftar jenis pelanggan
+     * untuk mempermudah pengelolaan data kendaraan di parkir.
+     */
     public function index(): View
     {
         $vehicles = Kendaraan::with('jenisPelanggan')->orderBy('created_at', 'desc')->get();
@@ -18,6 +22,10 @@ class VehicleManagementController extends Controller
         return view('management.vehicle.index', compact('vehicles', 'jenisPelanggan'));
     }
 
+    /**
+     * Menyimpan data kendaraan baru. Validasi panjang nomor plat dan jenis
+     * kendaraan dibuat agar data tetap konsisten dengan skema migrasi.
+     */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -37,7 +45,7 @@ class VehicleManagementController extends Controller
     {
         $validated = $request->validate([
             'pemilik' => ['required', 'string', 'max:100'],
-            'plat_nomor' => ['required', 'string', 'max:20', 'unique:kendaraans,plat_nomor,' . $kendaraan->id],
+            'plat_nomor' => ['required', 'string', 'max:20', 'unique:kendaraans,plat_nomor,'.$kendaraan->id],
             'jenis_kendaraan' => ['required', 'in:mobil,motor,truk'],
             'warna' => ['required', 'string', 'max:30'],
             'jenis_pelanggan_id' => ['nullable', 'uuid', 'exists:jenis_pelanggans,id'],

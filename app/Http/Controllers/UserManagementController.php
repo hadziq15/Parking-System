@@ -12,6 +12,10 @@ use Illuminate\View\View;
 
 class UserManagementController extends Controller
 {
+    /**
+     * Menampilkan user yang tersedia dan melakukan pencarian untuk memudahkan
+     * proses pengelolaan akses aplikasi.
+     */
     public function index(Request $request): View
     {
         $search = trim((string) $request->query('search', ''));
@@ -29,6 +33,10 @@ class UserManagementController extends Controller
         return view('management.user.index', compact('users', 'search'));
     }
 
+    /**
+     * Menambahkan user baru dengan password yang dikonversi ke hash agar aman
+     * dan tidak disimpan dalam bentuk plain text.
+     */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AreaParkir;
+use App\Models\JenisPelanggan;
 use App\Models\Tarif;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,15 +11,25 @@ use Illuminate\View\View;
 
 class AreaManagementController extends Controller
 {
+    /**
+     * Menampilkan daftar area parkir yang bisa dikelola oleh admin.
+     * Data ini dipakai untuk form penambahan area, tarif, dan keterkaitan
+     * dengan jenis pelanggan yang diperbolehkan masuk.
+     */
     public function index(): View
     {
         $areas = AreaParkir::with(['tarif', 'jenisPelanggans'])->orderBy('created_at', 'desc')->get();
         $tarifs = Tarif::orderBy('jenis_kendaraan')->get();
-        $jenisPelanggan = \App\Models\JenisPelanggan::orderBy('nama')->get();
+        $jenisPelanggan = JenisPelanggan::orderBy('nama')->get();
 
         return view('management.area.index', compact('areas', 'tarifs', 'jenisPelanggan'));
     }
 
+    /**
+     * Simpan area baru beserta relasi jenis pelanggan yang diizinkan.
+     * Struktur ini memastikan konfigurasi parkir tetap konsisten sebelum
+     * transaksi masuk dilakukan di area tersebut.
+     */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
